@@ -1152,6 +1152,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Cousins Photo Auto-Detection
+    const cousinsImg = document.getElementById('cousins-img');
+    const cousinsPlaceholder = document.getElementById('cousins-placeholder');
+    const cousinsItem = document.getElementById('cousins-gallery-item');
+    if (cousinsImg) {
+        cousinsImg.onload = function() {
+            cousinsImg.style.display = 'block';
+            if (cousinsPlaceholder) cousinsPlaceholder.style.display = 'none';
+            if (cousinsItem) cousinsItem.classList.remove('themed-card');
+        };
+        // Trigger load explicitly in case browser cached it or load fired before script
+        if (cousinsImg.complete && cousinsImg.naturalWidth > 0) {
+            cousinsImg.onload();
+        }
+    }
 
     // --- 9. MAKE A WISH INTERACTIVE 3D CAKE & BLOWOUT ---
     let wishScene, wishCamera, wishRenderer;

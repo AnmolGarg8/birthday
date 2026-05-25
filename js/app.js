@@ -754,7 +754,10 @@ document.addEventListener('DOMContentLoaded', () => {
             y: 35,
             duration: 0.85,
             stagger: 0.1, // Staggered entrance animation: 100ms
-            ease: "back.out(1.4)"
+            ease: "back.out(1.4)",
+            onComplete: () => {
+                gsap.set('#wishes-container .wish-card-flip', { clearProps: "transform,scale,y" });
+            }
         });
 
         // Swiper quotes carousel fade-in

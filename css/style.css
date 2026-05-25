@@ -978,7 +978,7 @@ body {
 
 .wish-card-flip.flipped,
 .wish-card-flip:hover {
-    transform: rotateY(180deg);
+    transform: rotateY(180deg) !important;
 }
 
 .wish-card-front, .wish-card-back {
@@ -1002,7 +1002,9 @@ body {
     background-size: 200% 100% !important;
     animation: shimmer 6s infinite linear;
     border: 1px solid rgba(183, 110, 121, 0.25) !important;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.6s ease;
+    z-index: 2;
+    transform: rotateY(0deg);
 }
 
 @keyframes shimmer {
@@ -1049,6 +1051,21 @@ body {
     border: 1px solid var(--color-rose-gold);
     transform: rotateY(180deg);
     text-align: center;
+    transition: opacity 0.6s ease;
+    z-index: 1;
+}
+
+/* Fallback visibility control for browsers with weak 3D/backface support */
+.wish-card-flip.flipped .wish-card-front,
+.wish-card-flip:hover .wish-card-front {
+    opacity: 0 !important;
+    z-index: 1 !important;
+}
+
+.wish-card-flip.flipped .wish-card-back,
+.wish-card-flip:hover .wish-card-back {
+    opacity: 1 !important;
+    z-index: 2 !important;
 }
 
 .wish-card-back::before {

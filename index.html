@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <!-- Custom Stylesheet -->
-    <link rel="stylesheet" href="css/style.css?v=25">
+    <link rel="stylesheet" href="css/style.css?v=30">
 
 </head>
 <body>
@@ -28,6 +28,28 @@
 
     <!-- Fireworks Canvas (For Candle Blowout) -->
     <canvas id="fireworks-canvas"></canvas>
+
+            <!-- Cake Cutting Animation -->
+            <div id="cake-cut-overlay" class="cake-cut-overlay">
+                <div class="cake-slice-left">🍰</div>
+                <div class="cake-slice-right">🍰</div>
+                <div class="knife-emoji">🔪</div>
+                <div class="full-cake">🎂</div>
+            </div>
+
+
+            <!-- Blowout Success overlay card -->
+            <div id="wish-success-msg" class="wish-success-overlay">
+                <div class="success-content">
+                    <div class="star-burst">🌠</div>
+                    <h2>Your wish is on its way!</h2>
+                    <p class="success-glow-text">Your 24th year will be MAGICAL ✨</p>
+                    <p class="success-desc">May the universe conspire to bring you all the love, happiness, and grand success you deserve. 💖</p>
+                    
+                    <button id="social-wish-btn" class="cta-button share-wish-btn" style="margin-top:25px;">Share your wish 🌟</button>
+                    <button id="relight-btn" class="cta-button relight-button" style="margin-top:25px; margin-left: 10px;">Re-light 🕯️</button>
+                </div>
+            </div>
 
     <!-- SECTION 1: LOADING SCREEN -->
     <div id="loader" class="loader-overlay">
@@ -957,26 +979,6 @@
                 <div class="wish-instruction">Click the flame or press the button below</div>
                 <button id="blow-btn" class="cta-button blow-button">Blow the Candles 🌬️</button>
             </div>
-            <!-- Cake Cutting Animation -->
-            <div id="cake-cut-overlay" class="cake-cut-overlay">
-                <div class="cake-slice-left">🍰</div>
-                <div class="cake-slice-right">🍰</div>
-                <div class="knife-emoji">🔪</div>
-                <div class="full-cake">🎂</div>
-            </div>
-
-            <!-- Blowout Success overlay card -->
-            <div id="wish-success-msg" class="wish-success-overlay">
-                <div class="success-content">
-                    <div class="star-burst">🌠</div>
-                    <h2>Your wish is on its way!</h2>
-                    <p class="success-glow-text">Your 24th year will be MAGICAL ✨</p>
-                    <p class="success-desc">May the universe conspire to bring you all the love, happiness, and grand success you deserve. 💖</p>
-                    
-                    <button id="social-wish-btn" class="cta-button share-wish-btn" style="margin-top:25px;">Share your wish 🌟</button>
-                    <button id="relight-btn" class="cta-button relight-button" style="margin-top:25px; margin-left: 10px;">Re-light 🕯️</button>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -1042,7 +1044,7 @@
     </svg>
 
     <!-- Main JS Application Logic -->
-    <script src="js/app.js?v=25"></script>
+    <script src="js/app.js?v=30"></script>
 
     <!-- Floating Back to Top Button -->
     <button id="back-to-top" class="back-to-top-btn" aria-label="Back to Top" title="Back to Top">
@@ -1051,6 +1053,7 @@
 
 </body>
 </html>
+
 
 
 

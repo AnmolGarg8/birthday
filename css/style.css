@@ -1238,7 +1238,7 @@ footer {
     box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 20px rgba(183, 110, 121, 0.2);
     transform: rotate(4deg);
     border: 1px solid rgba(0,0,0,0.1);
-    max-width: 250px;
+    width: 250px;
     transition: all 0.4s ease;
     animation: floatPolaroidHero 5s infinite ease-in-out;
 }
@@ -1294,7 +1294,7 @@ footer {
     box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 20px rgba(141, 91, 150, 0.2);
     transform: rotate(-3deg);
     border: 1px solid rgba(0,0,0,0.1);
-    max-width: 230px;
+    width: 230px;
     transition: all 0.4s ease;
     animation: floatPolaroidMessage 5s infinite ease-in-out alternate;
 }

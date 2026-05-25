@@ -152,8 +152,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="hero-photo-side">
-                    <div class="hero-polaroid-frame">
+                <div class="hero-photo-side" style="position: relative;">
+                    <!-- Double Polaroid Collage -->
+                    <div class="hero-polaroid-frame hero-polaroid-back" style="position: absolute; right: 70px; top: -60px; transform: rotate(-14deg) scale(0.9); z-index: 1;">
+                        <img src="assets/muskan_hero_yellow.jpg" alt="Muskan in yellow dress">
+                        <div class="hero-polaroid-caption">Gorgeous ✨</div>
+                    </div>
+                    
+                    <div class="hero-polaroid-frame hero-polaroid-front" style="position: relative; z-index: 2; transform: rotate(6deg) translateX(10px);">
                         <img src="assets/muskan_jaipur.jpg" alt="Muskan Singla Hawa Mahal">
                         <div class="hero-polaroid-caption">Muskan Singla ✨</div>
                     </div>
@@ -1038,5 +1044,6 @@
 
 </body>
 </html>
+
 
 

@@ -2743,3 +2743,18 @@ html, body {
     0%, 100% { transform: scale(0.8); opacity: 0.4; }
     50% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 15px #fff); }
 }
+
+/* Double Polaroid Collage Hover Effects */
+.hero-polaroid-back, .hero-polaroid-front {
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.hero-polaroid-back:hover {
+    transform: rotate(0deg) scale(1.05) translateY(-30px) !important;
+    z-index: 10 !important;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 20px rgba(183, 110, 121, 0.4);
+}
+.hero-polaroid-front:hover {
+    transform: rotate(0deg) scale(1.05) translateY(-20px) translateX(0) !important;
+    z-index: 10 !important;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 20px rgba(183, 110, 121, 0.4);
+}

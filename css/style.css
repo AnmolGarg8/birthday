@@ -2792,3 +2792,8 @@ html, body {
         transform: rotate(3deg) !important;
     }
 }
+
+/* Adjust crop focus for yellow dress photo to keep face visible */
+.hero-polaroid-left img {
+    object-position: top center !important;
+}

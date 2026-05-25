@@ -2664,3 +2664,82 @@ html, body {
     -webkit-backdrop-filter: blur(15px);
     background: rgba(5, 3, 12, 0.88) !important;
 }
+
+/* ==========================================
+   Finishing Touches: 3D CSS Hero Decorations (Balloons, Cake, Sparkles)
+   ========================================== */
+.hero-decorations {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 1; /* Under the text, above the canvas */
+    overflow: hidden;
+}
+
+/* 3D Floating Balloon */
+.decor-balloon {
+    position: absolute;
+    width: 65px;
+    height: 80px;
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    box-shadow: inset -12px -12px 24px rgba(0,0,0,0.25), 0 15px 25px rgba(0,0,0,0.2);
+    animation: float-balloon 12s infinite ease-in-out alternate;
+    opacity: 0.9;
+}
+.decor-balloon::after { /* Balloon knot */
+    content: '';
+    position: absolute;
+    bottom: -7px; left: 50%; transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 8px solid currentColor;
+}
+.decor-balloon::before { /* Balloon string */
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 50%;
+    width: 1px; height: 60px;
+    background: rgba(255,255,255,0.4);
+}
+
+.balloon-1 { top: 12%; left: 4%; background: radial-gradient(circle at 30% 30%, #fff, #b76e79); color: #b76e79; animation-delay: 0s; animation-duration: 10s; transform: scale(0.9); }
+.balloon-2 { bottom: 15%; left: 8%; background: radial-gradient(circle at 30% 30%, #fff, #dfa890); color: #dfa890; animation-delay: -4s; animation-duration: 14s; }
+.balloon-3 { top: 10%; right: 5%; background: radial-gradient(circle at 30% 30%, #fff, #eab0bf); color: #eab0bf; animation-delay: -2s; animation-duration: 12s; transform: scale(1.05); }
+.balloon-4 { bottom: 18%; right: 9%; background: radial-gradient(circle at 30% 30%, #fff, #f6d1d7); color: #f6d1d7; animation-delay: -7s; animation-duration: 11s; transform: scale(0.85); }
+.balloon-5 { top: 40%; left: 1.5%; background: radial-gradient(circle at 30% 30%, #fff, #c48a94); color: #c48a94; animation-delay: -1s; animation-duration: 13s; transform: scale(0.7); }
+
+@keyframes float-balloon {
+    0% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-30px) rotate(4deg); }
+    100% { transform: translateY(15px) rotate(-2deg); }
+}
+
+.floating-cake-emoji {
+    position: absolute;
+    font-size: 5.5rem;
+    bottom: 22%;
+    right: 18%;
+    animation: float-cake 5s infinite ease-in-out;
+    filter: drop-shadow(0 0 18px rgba(183, 110, 121, 0.7));
+}
+
+@keyframes float-cake {
+    0%, 100% { transform: translateY(0) scale(1) rotate(-2deg); }
+    50% { transform: translateY(-15px) scale(1.05) rotate(2deg); }
+}
+
+.sparkle-decor {
+    position: absolute;
+    font-size: 2.5rem;
+    animation: pulse-sparkle 3s infinite ease-in-out;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.7));
+}
+.sparkle-1 { top: 15%; left: 35%; animation-delay: 0s; font-size: 3rem; }
+.sparkle-2 { bottom: 25%; left: 40%; animation-delay: 1.5s; font-size: 4rem; }
+.sparkle-3 { top: 25%; right: 35%; animation-delay: 0.8s; font-size: 2.5rem; }
+.sparkle-4 { bottom: 30%; right: 45%; animation-delay: 2s; font-size: 2rem; }
+
+@keyframes pulse-sparkle {
+    0%, 100% { transform: scale(0.8); opacity: 0.4; }
+    50% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 15px #fff); }
+}

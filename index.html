@@ -1057,6 +1057,16 @@
     <!-- Swiper.js (Carousel script) -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     
+    <!-- SVG Heat Wave Filter for Dreamy Shimmer Effect -->
+    <svg style="display: none;">
+        <filter id="heat-wave-filter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.012 0.06" numOctaves="1" result="noise">
+                <animate attributeName="baseFrequency" dur="10s" values="0.012 0.06;0.012 0.04;0.012 0.06" repeatCount="indefinite" />
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+    </svg>
+
     <!-- Main JS Application Logic -->
     <script src="js/app.js"></script>
 </body>

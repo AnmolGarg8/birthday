@@ -61,6 +61,7 @@ body {
     height: 100vh;
     z-index: -2;
     pointer-events: none;
+    filter: url(#heat-wave-filter);
 }
 
 /* Cursor Sparkle Trail Canvas */
@@ -427,7 +428,7 @@ body {
     background: linear-gradient(135deg, var(--color-gold-light) 0%, var(--color-rose-gold-light) 50%, var(--color-purple-light) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 10px rgba(183, 110, 121, 0.3));
+    filter: drop-shadow(0 2px 10px rgba(183, 110, 121, 0.3)) url(#heat-wave-filter);
     animation: textShimmer 4s infinite alternate;
 }
 
@@ -675,7 +676,7 @@ body {
     background-image: url('../assets/muskan_new3.jpg');
     background-size: cover;
     background-position: center;
-    filter: blur(25px) brightness(0.2);
+    filter: blur(25px) brightness(0.2) url(#heat-wave-filter);
     z-index: -1;
 }
 
@@ -921,6 +922,13 @@ body {
     transform: translate(-50%, -50%) !important;
     bottom: auto !important;
     z-index: 9999;
+}
+
+/* Fix containing block of parent when expanded */
+.envelope-wrapper.expanded .envelope {
+    perspective: none !important;
+    transform: none !important;
+    z-index: 9999 !important;
 }
 
 .envelope-wrapper.expanded .letter-card-content {

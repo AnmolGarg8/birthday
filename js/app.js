@@ -38,7 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Initialize Audio element for Mixkit/Pixabay MP3 Birthday Track
             this.audioEl = new Audio();
-            this.audioEl.src = 'https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f28cf.mp3'; // Music box happy birthday
+            this.audioEl.src = 'https://archive.org/download/glass-animals-heat-waves_202601/Glass_Animals_-_Heat_Waves.mp3'; // Glass Animals - Heat Waves
+
             this.audioEl.loop = true;
             this.audioEl.crossOrigin = "anonymous";
             

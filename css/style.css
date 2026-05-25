@@ -480,7 +480,21 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 60px;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(183, 110, 121, 0.25);
+    border-radius: 12px;
+    padding: 10px 14px;
+    min-width: 75px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 0 10px rgba(183, 110, 121, 0.1);
+    transition: all 0.3s ease;
+}
+
+.countdown-item:hover {
+    border-color: rgba(183, 110, 121, 0.5);
+    box-shadow: 0 6px 20px rgba(183, 110, 121, 0.25), 0 0 15px rgba(212, 175, 55, 0.2);
+    transform: translateY(-2px);
 }
 
 .time-num {
@@ -490,6 +504,17 @@ body {
     color: var(--color-ivory);
     line-height: 1;
     text-shadow: 0 0 10px rgba(183, 110, 121, 0.7);
+    display: inline-block;
+}
+
+.time-num.flip {
+    animation: flipAnim 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955);
+}
+
+@keyframes flipAnim {
+    0% { transform: rotateX(0deg); }
+    50% { transform: rotateX(90deg); opacity: 0.5; }
+    100% { transform: rotateX(0deg); }
 }
 
 .time-label {
@@ -583,9 +608,7 @@ body {
 
 /* Additional Hero circle portrait absolute positioned bottom-left */
 .hero-extra-portrait {
-    position: absolute;
-    bottom: -20px;
-    left: -20px;
+    position: relative;
     width: 90px;
     height: 90px;
     border-radius: 50%;
@@ -2165,6 +2188,7 @@ body {
 .hero-tagline {
     font-family: var(--font-sans);
     font-size: 1.15rem;
+    font-style: italic;
     color: rgba(253, 251, 247, 0.85);
     margin-bottom: 20px;
     line-height: 1.6;

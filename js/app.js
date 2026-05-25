@@ -232,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let glPetals = [];
     let glStars;
     let mouseX = 0, mouseY = 0;
+    let balloonsActive = false;
 
     function initGlobalBg3D() {
         const canvas = document.getElementById('global-bg-canvas');
@@ -278,17 +279,18 @@ document.addEventListener('DOMContentLoaded', () => {
         glStars = new THREE.Points(starGeom, starMat);
         glScene.add(glStars);
 
-        // B. 3D Balloons (Stretching spheres)
-        const balloonColors = [0xB76E79, 0xC3B1E1, 0xF7E7CE]; // Rose gold, Lavender, Champagne Gold
+        // B. 3D Balloons (Stretching spheres in rose golds & pinks)
+        const balloonColors = [0xB76E79, 0xFFC0CB, 0xE0A899, 0xFF69B4, 0xFFB6C1];
         const balloonCount = 18;
 
         for (let i = 0; i < balloonCount; i++) {
             const color = balloonColors[i % balloonColors.length];
             const mat = new THREE.MeshStandardMaterial({
                 color: color,
-                roughness: 0.15,
-                metalness: 0.45,
-                roughnessMap: null
+                roughness: 0.08,
+                metalness: 0.9,
+                transparent: true,
+                opacity: 0.85
             });
 
             const balloonGeo = new THREE.SphereGeometry(0.55, 16, 16);
@@ -313,10 +315,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const string = new THREE.Line(stringGeo, stringMat);
             mesh.add(string);
 
-            // Random positions spread in space
+            // Random positions spread in space, starting off-screen bottom
             mesh.position.set(
                 (Math.random() - 0.5) * 35,
-                (Math.random() - 1.2) * 20,
+                -25 - Math.random() * 15,
                 (Math.random() - 0.5) * 15 - 5
             );
 
@@ -388,7 +390,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Animate Balloons rising
             glBalloons.forEach(b => {
-                b.mesh.position.y += b.speed;
+                if (balloonsActive) {
+                    b.mesh.position.y += b.speed;
+                }
                 b.mesh.position.x += Math.sin(t * 1.2 + b.sway) * b.amplitude;
                 b.mesh.rotation.z = Math.sin(t * 0.5 + b.sway) * 0.08;
 
@@ -505,12 +509,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 heroNumber24.position.y = (window.innerWidth < 768 ? 1.1 : 1.4) + Math.sin(elapsed * 1.5) * 0.1;
             }
 
-            // Animate flames
+            // Animate flames with organic random flicker
             const flames = heroScene.getObjectByName('hero-flames');
             if (flames) {
                 flames.children.forEach((flame, idx) => {
-                    const wave = Math.sin(elapsed * 12 + idx * 8) * 0.15;
+                    const randomNoise = (Math.random() - 0.5) * 0.08;
+                    const wave = Math.sin(elapsed * 12 + idx * 8) * 0.15 + randomNoise;
                     flame.scale.set(1 + wave, 1.2 + wave * 1.8, 1 + wave);
+                    flame.rotation.z = Math.sin(elapsed * 10 + idx) * 0.04 + (Math.random() - 0.5) * 0.02;
+                    flame.rotation.x = (Math.random() - 0.5) * 0.02;
                 });
             }
 
@@ -598,42 +605,67 @@ document.addEventListener('DOMContentLoaded', () => {
     function buildNumber24Model(group) {
         const goldMat = new THREE.MeshStandardMaterial({
             color: 0xD4AF37, // Golden Metallic
-            roughness: 0.12,
+            roughness: 0.08,
             metalness: 0.95,
             emissive: 0xD4AF37,
-            emissiveIntensity: 0.18
+            emissiveIntensity: 0.12
         });
 
-        const sphereGeo = new THREE.SphereGeometry(0.12, 16, 16);
+        const radius = 0.16; // Thicker tubes for solid 3D font look
+        const sphereGeo = new THREE.SphereGeometry(radius, 24, 24);
 
-        // Coordinate nodes to map "24"
-        const coords2 = [
-            { x: -1.0, y: 0.8 }, { x: -0.7, y: 1.1 }, { x: -0.3, y: 1.25 }, { x: 0.1, y: 1.25 },
-            { x: 0.5, y: 1.1 }, { x: 0.7, y: 0.8 }, { x: 0.6, y: 0.4 }, { x: 0.3, y: 0.1 },
-            { x: 0, y: -0.2 }, { x: -0.3, y: -0.5 }, { x: -0.6, y: -0.8 }, { x: -0.8, y: -1.1 },
-            { x: -0.9, y: -1.3 }, { x: -0.5, y: -1.3 }, { x: -0.1, y: -1.3 }, { x: 0.3, y: -1.3 },
-            { x: 0.7, y: -1.3 }
+        // Helper to draw a joint sphere
+        function addJoint(x, y) {
+            const joint = new THREE.Mesh(sphereGeo, goldMat);
+            joint.position.set(x, y, 0);
+            group.add(joint);
+        }
+
+        // Helper to draw a connecting cylinder segment
+        function addSegment(x1, y1, x2, y2) {
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const distance = Math.hypot(dx, dy);
+            const cylGeo = new THREE.CylinderGeometry(radius, radius, distance, 24);
+            const segment = new THREE.Mesh(cylGeo, goldMat);
+            segment.position.set((x1 + x2) / 2, (y1 + y2) / 2, 0);
+
+            // Rotate cylinder to point from (x1, y1) to (x2, y2)
+            const angle = Math.atan2(dy, dx);
+            segment.rotation.z = angle - Math.PI / 2;
+            group.add(segment);
+        }
+
+        // Define joint points for "2" (shifted left, offset X by -0.8)
+        const p2 = [
+            { x: -1.3, y: 1.2 },  // top-left
+            { x: -0.3, y: 1.2 },  // top-right
+            { x: -0.3, y: 0.3 },  // middle-right
+            { x: -1.2, y: -0.4 }, // diagonal-left
+            { x: -1.2, y: -1.2 }, // bottom-left
+            { x: -0.2, y: -1.2 }  // bottom-right
         ];
 
-        const coords4 = [
-            { x: 1.8, y: 1.1 }, { x: 1.5, y: 0.7 }, { x: 1.2, y: 0.3 }, { x: 0.9, y: -0.1 },
-            { x: 0.9, y: -0.5 }, { x: 1.3, y: -0.5 }, { x: 1.7, y: -0.5 }, { x: 2.1, y: -0.5 },
-            { x: 2.5, y: -0.5 }, { x: 1.8, y: 1.4 }, { x: 1.8, y: 0.5 }, { x: 1.8, y: 0 },
-            { x: 1.8, y: -0.5 }, { x: 1.8, y: -1.0 }, { x: 1.8, y: -1.3 }
+        // Define joint points for "4" (shifted right, offset X by 0.7)
+        const p4 = [
+            { x: 0.3, y: 1.2 },   // top-left
+            { x: 0.3, y: 0.0 },   // mid-left
+            { x: 1.1, y: 0.0 },   // mid-right
+            { x: 1.1, y: 1.5 },   // spine-top
+            { x: 1.1, y: -1.2 }   // spine-bottom
         ];
 
-        // Combine spheres mapping
-        coords2.forEach(pt => {
-            const sp = new THREE.Mesh(sphereGeo, goldMat);
-            sp.position.set(pt.x - 0.5, pt.y, 0);
-            group.add(sp);
-        });
+        // Draw joints & segments for "2"
+        p2.forEach(pt => addJoint(pt.x, pt.y));
+        for (let i = 0; i < p2.length - 1; i++) {
+            addSegment(p2[i].x, p2[i].y, p2[i + 1].x, p2[i + 1].y);
+        }
 
-        coords4.forEach(pt => {
-            const sp = new THREE.Mesh(sphereGeo, goldMat);
-            sp.position.set(pt.x - 0.5, pt.y, 0);
-            group.add(sp);
-        });
+        // Draw joints & segments for "4"
+        p4.forEach(pt => addJoint(pt.x, pt.y));
+        addSegment(p4[0].x, p4[0].y, p4[1].x, p4[1].y); // left vert
+        addSegment(p4[1].x, p4[1].y, p4[2].x, p4[2].y); // crossbar
+        addSegment(p4[3].x, p4[3].y, p4[4].x, p4[4].y); // spine
 
         // Set average scale
         group.scale.set(0.85, 0.85, 0.85);
@@ -1054,12 +1086,14 @@ document.addEventListener('DOMContentLoaded', () => {
         function renderWish() {
             const elapsed = clock.getElapsedTime();
 
-            // Animate flame flicker
+            // Animate flame flicker with organic random noise
             if (isCandleLit && wishFlameModel) {
-                const s = Math.sin(elapsed * 15) * 0.12;
+                const randomNoise = (Math.random() - 0.5) * 0.06;
+                const s = Math.sin(elapsed * 15) * 0.12 + randomNoise;
                 wishFlameModel.scale.set(1 + s, 1.2 + s * 1.5, 1 + s);
-                wishFlameModel.rotation.z = Math.sin(elapsed * 10) * 0.06;
-                flameLight.intensity = 2.5 + Math.sin(elapsed * 20) * 0.4;
+                wishFlameModel.rotation.z = Math.sin(elapsed * 10) * 0.06 + (Math.random() - 0.5) * 0.03;
+                wishFlameModel.rotation.x = (Math.random() - 0.5) * 0.03;
+                flameLight.intensity = 2.5 + Math.sin(elapsed * 20) * 0.4 + (Math.random() - 0.5) * 0.35;
             } else if (!isCandleLit) {
                 flameLight.intensity = Math.max(0, flameLight.intensity - 0.15);
             }
@@ -1312,18 +1346,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 loader.style.opacity = '0';
                 loader.style.visibility = 'hidden';
 
-                // Initial page load Double Side Confetti Cannon burst!
+                // Initial page load Double Side Confetti Cannon burst! (rose gold + purple + gold colors)
                 confetti({
-                    particleCount: 80,
+                    particleCount: 85,
                     angle: 60,
                     spread: 60,
-                    origin: { x: 0, y: 0.8 }
+                    origin: { x: 0, y: 0.8 },
+                    colors: ['#B76E79', '#C3B1E1', '#D4AF37']
                 });
                 confetti({
-                    particleCount: 80,
+                    particleCount: 85,
                     angle: 120,
                     spread: 60,
-                    origin: { x: 1, y: 0.8 }
+                    origin: { x: 1, y: 0.8 },
+                    colors: ['#B76E79', '#C3B1E1', '#D4AF37']
                 });
 
                 // Auto-trigger confetti explosion on load if birthday has arrived (IST check)
@@ -1332,9 +1368,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (birthdayTarget - now <= 0) {
                     setTimeout(() => {
                         confetti({
-                            particleCount: 150,
+                            particleCount: 160,
                             spread: 90,
-                            origin: { y: 0.6 }
+                            origin: { y: 0.6 },
+                            colors: ['#B76E79', '#C3B1E1', '#D4AF37']
                         });
                     }, 500);
                 }
@@ -1348,18 +1385,87 @@ document.addEventListener('DOMContentLoaded', () => {
                 spawnParentsPetals(); // Spawn petals inside Parents' Pride
                 spawnHeartParticles(); // Spawn rising hearts inside Parents' Pride
 
-                // Setup Typewriter subtitles in Hero
+                // Delayed start for balloons: float up 1.5s after load
+                setTimeout(() => {
+                    balloonsActive = true;
+                }, 1500);
+
+                // Setup Typewriter subtitles in Hero (Upgraded loop)
                 new Typed('#typed-welcome', {
                     strings: [
-                        "May 26, 2026 — A day the world got a little more magical ✨",
-                        "Celebrate Muskan's 24 years of absolute sparkle! 🌸",
-                        "Turn up the music & let the celebration begin... 🎵"
+                        "You are 24 & absolutely magical ✨",
+                        "You are loved beyond words 💖",
+                        "Your best chapter starts today 🦋"
                     ],
                     typeSpeed: 45,
                     backSpeed: 25,
                     loop: true,
                     backDelay: 2500
                 });
+
+                // Staggered hero elements reveal entrance animation using GSAP
+                const heroTL = gsap.timeline({ delay: 0.2 });
+                // Make sure elements start from hidden/shifted state
+                gsap.set('.shimmer-letter', { opacity: 0, y: 15 });
+                gsap.set('.hero-title .title-bottom', { opacity: 0, scale: 0.82 });
+                gsap.set('.hero-tagline', { opacity: 0, y: 15 });
+                gsap.set('.hero-subtext', { opacity: 0, y: 15 });
+                gsap.set('#countdown', { opacity: 0, scale: 0.9, y: 20 });
+                gsap.set('#celebrate-btn', { opacity: 0, y: 15 });
+                gsap.set('.hero-polaroid-frame', { opacity: 0, rotation: -12, y: 60 });
+                gsap.set('.hero-extra-portrait', { opacity: 0, scale: 0 });
+
+                heroTL.to('.shimmer-letter', {
+                    opacity: 1,
+                    y: 0,
+                    stagger: 0.04,
+                    duration: 0.55,
+                    ease: "power2.out"
+                })
+                .to('.hero-title .title-bottom', {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.75,
+                    ease: "back.out(1.7)"
+                }, "-=0.25")
+                .to('.hero-tagline', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.5,
+                    ease: "power2.out"
+                }, "-=0.2")
+                .to('.hero-subtext', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.5,
+                    ease: "power2.out"
+                }, "-=0.25")
+                .to('#countdown', {
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                    duration: 0.75,
+                    ease: "back.out(1.5)"
+                }, "-=0.25")
+                .to('#celebrate-btn', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.5,
+                    ease: "power2.out"
+                }, "-=0.25")
+                .to('.hero-extra-portrait', {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.7,
+                    ease: "back.out(1.7)"
+                }, "-=0.35")
+                .to('.hero-polaroid-frame', {
+                    opacity: 1,
+                    rotation: 4, // end rotation matches floating styling
+                    y: 0,
+                    duration: 1.1,
+                    ease: "power3.out"
+                }, "-=0.9");
 
             }, 550);
         }
@@ -1493,7 +1599,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (diff <= 0) {
             countdownWrapper.innerHTML = `
                 <div class="birthday-now-glow">
-                    🎉 TODAY IS THE DAY! Happy 24th Birthday, Muskan! 🎂
+                    🎉 IT'S YOUR DAY, MUSKAN! 🎂
                 </div>
             `;
             return;
@@ -1504,10 +1610,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-        document.getElementById('days').innerText = String(d).padStart(2, '0');
-        document.getElementById('hours').innerText = String(h).padStart(2, '0');
-        document.getElementById('minutes').innerText = String(m).padStart(2, '0');
-        document.getElementById('seconds').innerText = String(s).padStart(2, '0');
+        const updateNumber = (id, newVal) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el.innerText !== newVal) {
+                el.classList.remove('flip');
+                void el.offsetWidth; // trigger reflow
+                el.innerText = newVal;
+                el.classList.add('flip');
+            }
+        };
+
+        updateNumber('days', String(d).padStart(2, '0'));
+        updateNumber('hours', String(h).padStart(2, '0'));
+        updateNumber('minutes', String(m).padStart(2, '0'));
+        updateNumber('seconds', String(s).padStart(2, '0'));
     }
 
     setInterval(tickCountdown, 1000);
@@ -1639,17 +1756,47 @@ document.addEventListener('DOMContentLoaded', () => {
     resizeTrailCanvas();
     window.addEventListener('resize', resizeTrailCanvas);
 
+    function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius, color, alpha) {
+        let rot = Math.PI / 2 * 3;
+        let x = cx;
+        let y = cy;
+        let step = Math.PI / spikes;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = color;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = color;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - outerRadius)
+        for (let i = 0; i < spikes; i++) {
+            x = cx + Math.cos(rot) * outerRadius;
+            y = cy + Math.sin(rot) * outerRadius;
+            ctx.lineTo(x, y)
+            rot += step
+
+            x = cx + Math.cos(rot) * innerRadius;
+            y = cy + Math.sin(rot) * innerRadius;
+            ctx.lineTo(x, y)
+            rot += step
+        }
+        ctx.lineTo(cx, cy - outerRadius)
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+
     class Sparkle {
         constructor(x, y) {
             this.x = x;
             this.y = y;
-            this.size = Math.random() * 3 + 1.2;
-            const colors = ['#B76E79', '#C3B1E1', '#F7E7CE', '#FDFBF7'];
+            this.size = Math.random() * 2.5 + 1.2;
+            const colors = ['#D4AF37', '#F7E7CE', '#B76E79', '#FFB6C1', '#FFC0CB'];
             this.color = colors[Math.floor(Math.random() * colors.length)];
-            this.vx = (Math.random() - 0.5) * 1.6;
-            this.vy = (Math.random() - 0.5) * 1.6 - 0.4; // slight upward drift
+            this.vx = (Math.random() - 0.5) * 2.0;
+            this.vy = (Math.random() - 0.5) * 2.0 - 0.4; // slight upward drift
             this.alpha = 1.0;
-            this.decay = Math.random() * 0.02 + 0.015;
+            this.decay = Math.random() * 0.03 + 0.02; // fades out in ~0.5s
         }
 
         update() {
@@ -1659,28 +1806,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         draw() {
-            trailCtx.save();
-            trailCtx.globalAlpha = this.alpha;
-            trailCtx.fillStyle = this.color;
-            trailCtx.shadowBlur = 6;
-            trailCtx.shadowColor = this.color;
-            trailCtx.beginPath();
-            trailCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            trailCtx.fill();
-            trailCtx.restore();
+            drawStar(trailCtx, this.x, this.y, 5, this.size * 2.2, this.size * 1.1, this.color, this.alpha);
         }
     }
 
     window.addEventListener('mousemove', (e) => {
-        // Spawn 2 sparkles per frame mouse moves
-        for (let i = 0; i < 2; i++) {
+        // Spawn 6 star sparkles (range 5-8) per frame mouse moves
+        for (let i = 0; i < 6; i++) {
             particles.push(new Sparkle(e.clientX, e.clientY));
         }
     });
 
     window.addEventListener('touchmove', (e) => {
         if (e.touches && e.touches.length > 0) {
-            for (let i = 0; i < 2; i++) {
+            for (let i = 0; i < 6; i++) {
                 particles.push(new Sparkle(e.touches[0].clientX, e.touches[0].clientY));
             }
         }

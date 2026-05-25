@@ -691,40 +691,64 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 6. SWIPER QUOTES CAROUSEL (Initialization)
     // ==========================================
-    if (document.querySelector('.quotes-swiper')) {
-        const swiper = new Swiper('.quotes-swiper', {
-            slidesPerView: 1,
-            centeredSlides: true,
-            loop: true,
-            autoplay: {
-                delay: 5000, // 5-second auto-advance
-                disableOnInteraction: false,
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-            effect: 'fade',
-            fadeEffect: {
-                crossFade: true
-            },
-            on: {
-                slideChange: () => {
-                    // Play subtle chime note on slide shifts
-                    sound.triggerChime(67, 0.05, 0, 1.0);
-                }
-            }
-        });
+    // 6. PARENTS' PRIDE SECTIONS & PARTICLES
+    // ==========================================
+    const parentsLetter = document.getElementById('parents-letter');
+    if (parentsLetter) {
+        const text = parentsLetter.innerText;
+        const words = text.split(/\s+/);
+        parentsLetter.innerHTML = words.map(word => `<span class="word">${word}</span>`).join(' ');
+    }
+
+    function spawnParentsPetals() {
+        const container = document.getElementById('parents-pride');
+        if (!container) return;
+        
+        const petalCount = 15;
+        const colors = ['#e69a3b', '#d45d6c', '#B76E79', '#D4AF37']; // marigold & rose hues
+        for (let i = 0; i < petalCount; i++) {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("class", "parents-petal");
+            svg.setAttribute("viewBox", "0 0 30 30");
+            
+            const pathD = i % 2 === 0 
+                ? "M15 0 C25 10, 25 25, 15 30 C5 25, 5 10, 15 0" 
+                : "M15 5 C22 5, 27 12, 27 20 C27 27, 20 27, 15 22 C10 27, 3 27, 3 20 C3 12, 8 5, 15 5";
+                
+            svg.innerHTML = `<path d="${pathD}" fill="${colors[i % colors.length]}" />`;
+            svg.style.left = `${Math.random() * 100}%`;
+            svg.style.top = `-${Math.random() * 50 + 20}px`;
+            svg.style.animationDuration = `${Math.random() * 8 + 6}s`;
+            svg.style.animationDelay = `${Math.random() * 5}s`;
+            
+            const size = Math.random() * 16 + 12;
+            svg.style.width = `${size}px`;
+            svg.style.height = `${size}px`;
+            container.appendChild(svg);
+        }
+    }
+
+    function spawnHeartParticles() {
+        const container = document.getElementById('parents-pride');
+        if (!container) return;
+        
+        setInterval(() => {
+            if (document.visibilityState === 'hidden') return;
+            const heart = document.createElement('div');
+            heart.className = 'parents-heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = `${Math.random() * 80 + 10}%`;
+            heart.style.bottom = '10%';
+            heart.style.animationDuration = `${Math.random() * 4 + 4}s`;
+            heart.style.fontSize = `${Math.random() * 1.2 + 0.8}rem`;
+            container.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 6000);
+        }, 1200);
     }
 
     // ==========================================
-    // 7. GSAP SCROLL TRIGGERS REVEAL (Timeline & Cousins)
+    // 7. GSAP SCROLL TRIGGERS REVEAL (Timeline & Parents)
     // ==========================================
     gsap.registerPlugin(ScrollTrigger);
 
@@ -742,7 +766,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ease: "power3.out"
         });
 
-        // 24 Wishes grid cards entry
+        // 24 Wishes grid cards entry (improved staggered fly-in)
         gsap.from('#wishes-container .wish-card-flip', {
             scrollTrigger: {
                 trigger: '#wishes',
@@ -750,28 +774,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggleActions: "play none none none"
             },
             opacity: 0,
-            scale: 0.82,
-            y: 35,
-            duration: 0.85,
-            stagger: 0.1, // Staggered entrance animation: 100ms
+            scale: 0.8,
+            y: 60,
+            duration: 0.95,
+            stagger: 0.1,
             ease: "back.out(1.4)",
             onComplete: () => {
                 gsap.set('#wishes-container .wish-card-flip', { clearProps: "transform,scale,y" });
             }
         });
 
-        // Swiper quotes carousel fade-in
-        gsap.from('.quotes-swiper', {
+        // Parents' Pride Section fade-in
+        gsap.from('.parents-flex-wrapper', {
             scrollTrigger: {
-                trigger: '#quotes',
-                start: "top 80%",
+                trigger: '#parents-pride',
+                start: "top 75%",
                 toggleActions: "play none none none"
             },
             opacity: 0,
-            y: 40,
-            duration: 1.0,
+            y: 50,
+            duration: 1.2,
             ease: "power2.out"
         });
+
+        // Word-by-word reveal scrub for parents' message
+        if (document.querySelectorAll('#parents-letter .word').length > 0) {
+            gsap.to('#parents-letter .word', {
+                scrollTrigger: {
+                    trigger: '#parents-pride',
+                    start: "top 55%",
+                    end: "bottom 75%",
+                    scrub: 0.5,
+                },
+                opacity: 1,
+                y: 0,
+                stagger: 0.02,
+                className: "word revealed"
+            });
+        }
 
         // Alternating Vertical Timeline elements slide/fade reveals
         gsap.utils.toArray('.timeline-vertical-item').forEach(item => {
@@ -1286,9 +1326,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     origin: { x: 1, y: 0.8 }
                 });
 
-                // Auto-trigger confetti explosion on load if birthday has arrived
+                // Auto-trigger confetti explosion on load if birthday has arrived (IST check)
                 const now = new Date().getTime();
-                const birthdayTarget = new Date('2026-05-26T00:00:00').getTime();
+                const birthdayTarget = new Date('2026-05-26T00:00:00+05:30').getTime();
                 if (birthdayTarget - now <= 0) {
                     setTimeout(() => {
                         confetti({
@@ -1305,6 +1345,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 initWishScene();
                 setupScrollReveals();
                 spawnCousinsPetals(); // Spawn petals inside Cousins Squad
+                spawnParentsPetals(); // Spawn petals inside Parents' Pride
+                spawnHeartParticles(); // Spawn rising hearts inside Parents' Pride
 
                 // Setup Typewriter subtitles in Hero
                 new Typed('#typed-welcome', {
@@ -1388,6 +1430,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Lightbox arrows click
+    const lightboxPrev = document.getElementById('lightbox-prev');
+    const lightboxNext = document.getElementById('lightbox-next');
+    
+    if (lightboxPrev) {
+        lightboxPrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentGalleryIndex = (currentGalleryIndex - 1 + galleryData.length) % galleryData.length;
+            openLightbox(currentGalleryIndex);
+        });
+    }
+    if (lightboxNext) {
+        lightboxNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentGalleryIndex = (currentGalleryIndex + 1) % galleryData.length;
+            openLightbox(currentGalleryIndex);
+        });
+    }
+
     if (lightboxClose) {
         lightboxClose.addEventListener('click', () => {
             lightbox.classList.remove('active');
@@ -1419,7 +1480,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 13. COUNTDOWN TO MAY 26, 2026 (Birthday Arrived Banner)
     // ==========================================
-    const birthdayTarget = new Date('2026-05-26T00:00:00').getTime();
+    const birthdayTarget = new Date('2026-05-26T00:00:00+05:30').getTime();
 
     function tickCountdown() {
         const now = new Date().getTime();
@@ -1432,7 +1493,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (diff <= 0) {
             countdownWrapper.innerHTML = `
                 <div class="birthday-now-glow">
-                    🎉 TODAY IS THE DAY! Muskan is officially 24! 🎉
+                    🎉 TODAY IS THE DAY! Happy 24th Birthday, Muskan! 🎂
                 </div>
             `;
             return;
@@ -1453,6 +1514,68 @@ document.addEventListener('DOMContentLoaded', () => {
     tickCountdown();
 
     // ==========================================
+    // 14. RELIGHT CANDLE & BACK TO TOP BUTTON LOGIC
+    // ==========================================
+    const relightBtn = document.getElementById('relight-btn');
+    if (relightBtn) {
+        relightBtn.addEventListener('click', () => {
+            isCandleLit = true;
+            if (wishFlameModel) {
+                wishFlameModel.visible = true;
+                wishFlameModel.scale.set(1, 1, 1);
+            }
+            const overlay = document.getElementById('wish-success-msg');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+            if (fireworksLoopId) {
+                cancelAnimationFrame(fireworksLoopId);
+                fireworksLoopId = null;
+            }
+            if (fireCtx) {
+                fireCtx.clearRect(0, 0, fireCanvas.width, fireCanvas.height);
+            }
+            fireCanvas.style.display = 'none';
+            sound.triggerChime(72, 0.12, 0, 1.5);
+        });
+    }
+
+    const backToTopBtn = document.getElementById('back-to-top');
+    if (backToTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            sound.triggerChime(76, 0.1, 0, 1.2);
+        });
+    }
+
+    // Custom Toast Notification displayer
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'custom-toast';
+        toast.innerText = message;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('visible');
+        }, 10);
+        setTimeout(() => {
+            toast.classList.remove('visible');
+            setTimeout(() => {
+                toast.remove();
+            }, 400);
+        }, 3000);
+    }
+
+    // ==========================================
     // 15. SHARE LINKS & WHATSAPP INTEGRATION
     // ==========================================
     const copyLinkBtn = document.getElementById('share-btn');
@@ -1463,14 +1586,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function copyToClipboard() {
         navigator.clipboard.writeText(window.location.href).then(() => {
-            alert("Birthday page link successfully copied to clipboard! Share it with family & friends! 💖");
+            showToast("Birthday page link successfully copied to clipboard! Share it with family & friends! 💖");
         }).catch(err => {
             console.error("Clipboard copy failed: ", err);
+            showToast("Could not copy link automatically. Please copy the URL from your address bar!");
         });
     }
 
     if (copyLinkBtn) {
-        copyLinkBtn.addEventListener('click', copyToClipboard);
+        copyLinkBtn.addEventListener('click', () => {
+            if (navigator.share) {
+                navigator.share({
+                    title: "Happy 24th Birthday, Muskan! 🎂✨",
+                    text: shareText,
+                    url: window.location.href
+                }).catch(err => {
+                    console.log("Web Share failed, copying link:", err);
+                    copyToClipboard();
+                });
+            } else {
+                copyToClipboard();
+            }
+        });
     }
 
     if (waShareBtn) {

@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    <!-- Music Control Float Widget -->
+    <!-- Music Control Widget (z-index 9999, always visible, bottom-right) -->
     <div id="music-widget" class="music-widget-container">
         <button id="audio-toggle" class="audio-control-btn" aria-label="Toggle Music" title="Play Music">
             <div class="music-icon">🎵</div>
@@ -77,7 +77,7 @@
         
         <div class="hero-text-content">
             <div class="hero-flex-wrapper">
-                <div class="hero-info-side">
+                <div class="hero-info-side" style="position: relative;">
                     <h1 class="hero-title animate-glow">
                         <span class="title-top">Happy 24th Birthday</span>
                         <span class="title-bottom">Muskan Singla ✨</span>
@@ -108,6 +108,11 @@
                     </div>
 
                     <button id="celebrate-btn" class="cta-button">Celebrate Now ✨</button>
+
+                    <!-- Small hero circular extra portrait at bottom-left of hero info side -->
+                    <div class="hero-extra-portrait">
+                        <img src="assets/muskan_new1.jpg" alt="Muskan Portrait">
+                    </div>
                 </div>
                 <div class="hero-photo-side">
                     <div class="hero-polaroid-frame">
@@ -126,6 +131,7 @@
 
     <!-- SECTION 3: PERSONAL LETTER (Envelope Animation) -->
     <section id="message" class="message-section scroll-section">
+        <!-- Message background blur using a new photo is applied via CSS message-section::before -->
         <div class="section-container">
             <h2 class="section-title">A Sealed Note For You... 💌</h2>
             <p class="section-subtitle">Click the envelope below to open it and read a message from the heart</p>
@@ -138,22 +144,52 @@
                         <div class="pocket"></div>
                         <!-- Sliding Letter Card -->
                         <div class="letter-card" id="letter-card">
-                            <div class="letter-card-bg" style="background-image: url('assets/muskan_pink.jpg');"></div>
+                            <div class="letter-card-bg" style="background-image: url('assets/muskan_new5.png');"></div>
                             <div class="letter-card-content">
                                 <span class="close-letter-btn" id="close-letter">&times;</span>
+                                
+                                <!-- String Light Decorative element (CSS only) -->
+                                <div class="string-lights">
+                                    <span class="string-light-dot"></span>
+                                    <span class="string-light-dot"></span>
+                                    <span class="string-light-dot"></span>
+                                    <span class="string-light-dot"></span>
+                                    <span class="string-light-dot"></span>
+                                    <span class="string-light-dot"></span>
+                                    <span class="string-light-dot"></span>
+                                    <span class="string-light-dot"></span>
+                                    <span class="string-light-dot"></span>
+                                    <span class="string-light-dot"></span>
+                                    <span class="string-light-dot"></span>
+                                </div>
+
                                 <p class="greeting">Dear Muskan,</p>
                                 <p class="body-letter">
-                                    Words feel small when I think about how much you mean to me. You are not just my sister — you are my home. My safe place. My forever favorite person.
+                                    Words feel small when I think about how much you mean to me. 
+                                    You are not just my sister — you are my home. My safe place. 
+                                    My forever favorite person.
                                     <br><br>
-                                    I have watched you laugh so hard you cried, fight battles nobody saw, and come out stronger every single time. I have seen you be kind when the world wasn't kind back. I have seen you love deeply and give freely.
+                                    I have watched you laugh so hard you cried, fight battles nobody saw, 
+                                    and come out stronger every single time. I have seen you be kind when 
+                                    the world wasn't kind back. I have seen you love deeply and give freely.
                                     <br><br>
-                                    At 24, you stand at the most exciting chapter of your story. And I want you to know — I will be cheering the loudest from the front row, every single step of the way.
+                                    At 24, you stand at the most exciting chapter of your story. 
+                                    And I want you to know — I will be cheering the loudest from the 
+                                    front row, every single step of the way.
                                     <br><br>
-                                    No matter where life takes us, you will always be my favorite adventure, my most treasured memory, and my greatest pride.
+                                    No matter where life takes us, you will always be my favorite 
+                                    adventure, my most treasured memory, and my greatest pride.
                                     <br><br>
-                                    Happy Birthday, Muskan Singla. The world is so lucky to have you. 💖
+                                    Happy Birthday, Muskan Singla. 
+                                    The world is so lucky to have you. 💖
                                 </p>
                                 <p class="valediction">— Your sibling, always 🌸</p>
+
+                                <!-- Scroll Indicator inside card -->
+                                <div class="letter-scroll-indicator">
+                                    <span>Scroll down to read more</span>
+                                    <div class="scroll-arrow-mini"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -169,7 +205,270 @@
             <p class="section-subtitle">Staggered into a galaxy of cards. Hover to flip and read each wish.</p>
             
             <div class="wishes-grid" id="wishes-container">
-                <!-- 24 wish cards will be dynamically loaded by JavaScript -->
+                <!-- Hardcoded Wishes Flip Cards -->
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">01</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #01</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May every dream you dare to dream become your reality this year 🌟</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">02</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #02</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May you find your biggest win in the place you least expected 🏆</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">03</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #03</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May love find you in ways that take your breath away 💕</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">04</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #04</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May your confidence shine louder than any doubt 💪</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">05</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #05</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May this year be your most traveled and most adventured yet ✈️</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">06</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #06</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May every morning feel like a new possibility waiting for you 🌅</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">07</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #07</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May the people around you finally match your energy ✨</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">08</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #08</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May your career take a leap that makes you proud 🚀</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">09</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #09</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May you always choose yourself first, without guilt 🦋</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">10</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #10</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May happiness become your permanent address this year 🏡</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">11</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #11</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May your laughter always be the loudest in the room 😂</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">12</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #12</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May every tear you cry from now on be only from joy 💧</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">13</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #13</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May you always know exactly how loved you truly are 💖</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">14</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #14</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May your heart feel full and your burdens feel light 🌸</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">15</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #15</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May your friendships grow deeper and your circle grow stronger 👯</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">16</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #16</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May every risk you take this year pay off beautifully 🎯</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">17</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #17</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May you discover new parts of yourself that blow your mind 🌈</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">18</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #18</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May good health and glowing energy be your constant companion 💫</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">19</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #19</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May your family always be your anchor and your wings 🕊️</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">20</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #20</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May peace find you even in the most chaotic moments 🌊</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">21</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #21</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May you celebrate more wins than you ever thought possible 🥂</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">22</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #22</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May your story inspire everyone who is lucky enough to know you 📖</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">23</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #23</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May 24 be the year everything you worked for finally clicks 🔑</p>
+                    </div>
+                </div>
+
+                <div class="wish-card-flip" tabindex="0">
+                    <div class="wish-card-front">
+                        <span class="wish-number">24</span>
+                        <span class="wish-sparkle">✦</span>
+                        <h4>Wish #24</h4>
+                    </div>
+                    <div class="wish-card-back">
+                        <p>May today remind you: you are extraordinary, Muskan. Always. 🎂✨</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -180,156 +479,235 @@
             <h2 class="section-title font-serif">Inspirational Words for a Queen 👑</h2>
             <p class="section-subtitle">Words to inspire your 24th year and beyond</p>
             
-            <!-- Swiper Carousel Container -->
+            <!-- Swiper Carousel Container (Hardcoded Slides) -->
             <div class="swiper quotes-swiper">
-                <div class="swiper-wrapper" id="quotes-swiper-wrapper">
-                    <!-- Cards populated by JS -->
+                <div class="swiper-wrapper">
+                    <!-- Slide 1 -->
+                    <div class="swiper-slide">
+                        <div class="quote-card">
+                            <div class="quote-card-bg" style="background-image: url('assets/muskan_buddha.jpg');"></div>
+                            <div class="quote-card-content">
+                                <div class="quote-mark">“</div>
+                                <p class="quote-text">She is clothed in strength and dignity, and she laughs without fear of the future.</p>
+                                <div class="quote-underline"></div>
+                                <p class="quote-author">Proverbs 31:25</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="swiper-slide">
+                        <div class="quote-card">
+                            <div class="quote-card-bg" style="background-image: url('assets/muskan_mountain.jpg');"></div>
+                            <div class="quote-card-content">
+                                <div class="quote-mark">“</div>
+                                <p class="quote-text">You are never too old to set another goal or to dream a new dream.</p>
+                                <div class="quote-underline"></div>
+                                <p class="quote-author">— C.S. Lewis</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="swiper-slide">
+                        <div class="quote-card">
+                            <div class="quote-card-bg" style="background-image: url('assets/muskan_flags.jpg');"></div>
+                            <div class="quote-card-content">
+                                <div class="quote-mark">“</div>
+                                <p class="quote-text">A sister is both your mirror and your opposite.</p>
+                                <div class="quote-underline"></div>
+                                <p class="quote-author">— Elizabeth Fishel</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 4 -->
+                    <div class="swiper-slide">
+                        <div class="quote-card">
+                            <div class="quote-card-bg" style="background-image: url('assets/muskan_pink.jpg');"></div>
+                            <div class="quote-card-content">
+                                <div class="quote-mark">“</div>
+                                <p class="quote-text">The most beautiful thing you can wear is confidence.</p>
+                                <div class="quote-underline"></div>
+                                <p class="quote-author">— Blake Lively</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 5 -->
+                    <div class="swiper-slide">
+                        <div class="quote-card">
+                            <div class="quote-card-bg" style="background-image: url('assets/muskan_jaipur.jpg');"></div>
+                            <div class="quote-card-content">
+                                <div class="quote-mark">“</div>
+                                <p class="quote-text">She believed she could, so she did.</p>
+                                <div class="quote-underline"></div>
+                                <p class="quote-author">— R.S. Grey</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 6 -->
+                    <div class="swiper-slide">
+                        <div class="quote-card">
+                            <div class="quote-card-bg" style="background-image: url('assets/muskan_lights.jpg');"></div>
+                            <div class="quote-card-content">
+                                <div class="quote-mark">“</div>
+                                <p class="quote-text">Do not wait for the perfect moment. Take the moment and make it perfect.</p>
+                                <div class="quote-underline"></div>
+                                <p class="quote-author">— Unknown</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 7 -->
+                    <div class="swiper-slide">
+                        <div class="quote-card">
+                            <div class="quote-card-bg" style="background-image: url('assets/muskan_night1.jpg');"></div>
+                            <div class="quote-card-content">
+                                <div class="quote-mark">“</div>
+                                <p class="quote-text">You are enough. You have always been enough. You will always be enough.</p>
+                                <div class="quote-underline"></div>
+                                <p class="quote-author">— Unknown</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 8 -->
+                    <div class="swiper-slide">
+                        <div class="quote-card">
+                            <div class="quote-card-bg" style="background-image: url('assets/muskan_night2.jpg');"></div>
+                            <div class="quote-card-content">
+                                <div class="quote-mark">“</div>
+                                <p class="quote-text">Behind every strong woman is herself.</p>
+                                <div class="quote-underline"></div>
+                                <p class="quote-author">— Unknown</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 9 -->
+                    <div class="swiper-slide">
+                        <div class="quote-card">
+                            <div class="quote-card-bg" style="background-image: url('assets/muskan_mountain.jpg');"></div>
+                            <div class="quote-card-content">
+                                <div class="quote-mark">“</div>
+                                <p class="quote-text">Life is not measured by the breaths we take, but by the moments that take our breath away.</p>
+                                <div class="quote-underline"></div>
+                                <p class="quote-author">— Unknown</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 10 -->
+                    <div class="swiper-slide">
+                        <div class="quote-card">
+                            <div class="quote-card-bg" style="background-image: url('assets/muskan_jaipur.jpg');"></div>
+                            <div class="quote-card-content">
+                                <div class="quote-mark">“</div>
+                                <p class="quote-text">At 24, the whole world is still yours to conquer. Go get it, queen. 👑</p>
+                                <div class="quote-underline"></div>
+                                <p class="quote-author">— Your Sibling</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- Pagination -->
                 <div class="swiper-pagination"></div>
-                <!-- Navigation Arrows -->
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
+                <!-- Navigation Arrows (Always Visible) -->
+                <div class="swiper-button-next" style="display: flex;"></div>
+                <div class="swiper-button-prev" style="display: flex;"></div>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 6: MUSKAN'S JOURNEY TIMELINE -->
-    <section id="timeline-section" class="timeline-section-container scroll-section">
+    <!-- SECTION 6: MUSKAN'S JOURNEY TIMELINE (Vertical Timeline Section) -->
+    <section id="timeline-section" class="timeline-vertical-section scroll-section">
         <div class="section-container">
-            <h2 class="section-title">Muskan's Journey Timeline 🌸</h2>
-            <p class="section-subtitle">Desktop horizontal scroll / mobile vertical view. Follow the stars of her path.</p>
+            <h2 class="section-title">24 Years of Muskan ✨ — A Journey Worth Celebrating</h2>
+            <p class="section-subtitle">Alternating milestones detailing the road she has traveled</p>
             
-            <div class="timeline-scroll-wrapper" id="timeline-scroll-wrapper">
-                <div class="timeline-progress-line" id="timeline-progress-line">
-                    <div class="timeline-progress-active" id="timeline-progress-active"></div>
+            <div class="timeline-vertical-wrapper">
+                <!-- Center vertical glowing line -->
+                <div class="timeline-vertical-line"></div>
+
+                <!-- Milestone 1 -->
+                <div class="timeline-vertical-item left">
+                    <div class="timeline-vertical-icon">🌸</div>
+                    <div class="timeline-vertical-content">
+                        <h3>2002</h3>
+                        <p>A star is born. The world didn't know it yet.</p>
+                    </div>
                 </div>
-                
-                <div class="timeline-container" id="timeline-container">
-                    <!-- Milestones -->
-                    <div class="timeline-item" data-milestone="1">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-card glass-card">
-                            <span class="timeline-badge">1998</span>
-                            <h3>Born 🌸</h3>
-                            <p>A star enters the world, filling it with immediate warmth and joy.</p>
-                        </div>
+
+                <!-- Milestone 2 -->
+                <div class="timeline-vertical-item right">
+                    <div class="timeline-vertical-icon">📚</div>
+                    <div class="timeline-vertical-content">
+                        <h3>Growing Up</h3>
+                        <p>Building the foundation of a legend.</p>
                     </div>
-                    
-                    <div class="timeline-item" data-milestone="2">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-card glass-card">
-                            <span class="timeline-badge">School</span>
-                            <h3>School Days 📚</h3>
-                            <p>Building the foundation of a legend, making lifelong friends and learning to shine.</p>
-                        </div>
+                </div>
+
+                <!-- Milestone 3 -->
+                <div class="timeline-vertical-item left">
+                    <div class="timeline-vertical-icon">🎓</div>
+                    <div class="timeline-vertical-content">
+                        <h3>College</h3>
+                        <p>She leveled up. Completely.</p>
                     </div>
-                    
-                    <div class="timeline-item" data-milestone="3">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-card glass-card">
-                            <span class="timeline-badge">College</span>
-                            <h3>College Chapter 🎓</h3>
-                            <p>She leveled up everything, proving her brilliance and growing into a leader.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item" data-milestone="4">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-card photo-card">
+                </div>
+
+                <!-- Milestone 4 -->
+                <div class="timeline-vertical-item right">
+                    <div class="timeline-vertical-icon">✈️</div>
+                    <div class="timeline-vertical-content">
+                        <div class="timeline-vertical-photo">
                             <img src="assets/muskan_jaipur.jpg" alt="Jaipur Diaries">
-                            <div class="photo-card-info">
-                                <span class="timeline-badge">Travel</span>
-                                <h3>Jaipur Diaries ✈️</h3>
-                                <p>She explored the royal pink city, making memories against grand backdrops.</p>
-                            </div>
                         </div>
+                        <h3>Jaipur</h3>
+                        <p>She explored the Pink City and owned it.</p>
                     </div>
-                    
-                    <div class="timeline-item" data-milestone="5">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-card photo-card">
-                            <img src="assets/muskan_mountain.jpg" alt="Mountain Girl">
-                            <div class="photo-card-info">
-                                <span class="timeline-badge">Adventure</span>
-                                <h3>Mountain Girl 🏔️</h3>
-                                <p>Chasing horizons, finding peaceful strength in the high mountain valleys.</p>
-                            </div>
+                </div>
+
+                <!-- Milestone 5 -->
+                <div class="timeline-vertical-item left">
+                    <div class="timeline-vertical-icon">🏔️</div>
+                    <div class="timeline-vertical-content">
+                        <div class="timeline-vertical-photo">
+                            <img src="assets/muskan_mountain.jpg" alt="Mountains Diaries">
                         </div>
+                        <h3>Mountains</h3>
+                        <p>She chased horizons no one else could see.</p>
                     </div>
-                    
-                    <div class="timeline-item" data-milestone="6">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-card photo-card">
+                </div>
+
+                <!-- Milestone 6 -->
+                <div class="timeline-vertical-item right">
+                    <div class="timeline-vertical-icon">🎏</div>
+                    <div class="timeline-vertical-content">
+                        <div class="timeline-vertical-photo">
+                            <img src="assets/muskan_flags.jpg" alt="Spiritual Journey">
+                        </div>
+                        <h3>Spiritual Journey</h3>
+                        <p>Finding peace in every step.</p>
+                    </div>
+                </div>
+
+                <!-- Milestone 7 -->
+                <div class="timeline-vertical-item left">
+                    <div class="timeline-vertical-icon">🌙</div>
+                    <div class="timeline-vertical-content">
+                        <div class="timeline-vertical-photo">
                             <img src="assets/muskan_night1.jpg" alt="Mussoorie Nights">
-                            <div class="photo-card-info">
-                                <span class="timeline-badge">Memories</span>
-                                <h3>Mussoorie Nights 🌙</h3>
-                                <p>Magical winter street walks under the moon, laughing in the cold breeze.</p>
-                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="timeline-item" data-milestone="7">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-card photo-card">
-                            <img src="assets/muskan_flags.jpg" alt="Spiritual Soul">
-                            <div class="photo-card-info">
-                                <span class="timeline-badge">Peace</span>
-                                <h3>Spiritual Soul 🎏</h3>
-                                <p>Finding inner peace and alignment with every step, among prayer flags.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item" data-milestone="8">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-card photo-card">
-                            <img src="assets/muskan_pink.jpg" alt="Today">
-                            <div class="photo-card-info">
-                                <span class="timeline-badge">Celebration</span>
-                                <h3>Today 🎂</h3>
-                                <p>24 and glowing, standing on the edge of her most exciting chapter yet!</p>
-                            </div>
-                        </div>
+                        <h3>Mussoorie Nights</h3>
+                        <p>Magical moments, forever memories.</p>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- SECTION 7: COUSINS SQUAD (DEDICATED SECTION) -->
-    <section id="cousins-squad" class="cousins-section scroll-section">
-        <div class="section-container">
-            <h2 class="section-title">Our Crazy, Loving, Iconic Cousins Squad 👯‍♀️❤️</h2>
-            <p class="section-subtitle">Built different. Different faces, same madness. Same love.</p>
-            
-            <div class="cousins-grid-container">
-                <div class="cousin-frame-wrapper pos-posed">
-                    <div class="cousin-golden-frame">
-                        <img src="assets/cousins_posed.jpg" alt="Cousins Squad Posed" id="cousins-posed-img">
-                        <div class="frame-bokeh-glow"></div>
-                        <div class="frame-label">Squad Posed ✨</div>
+                <!-- Milestone 8 (Using new image) -->
+                <div class="timeline-vertical-item right">
+                    <div class="timeline-vertical-icon">🎂</div>
+                    <div class="timeline-vertical-content">
+                        <div class="timeline-vertical-photo">
+                            <img src="assets/muskan_new5.png" alt="Muskan Today">
+                        </div>
+                        <h3>May 26, 2026</h3>
+                        <p>24 and GLOWING. The best is yet to come.</p>
                     </div>
                 </div>
-                
-                <div class="cousin-frame-wrapper pos-candid">
-                    <div class="cousin-golden-frame">
-                        <img src="assets/cousins_candid.jpg" alt="Cousins Squad Candid" id="cousins-candid-img">
-                        <div class="frame-bokeh-glow"></div>
-                        <div class="frame-label">Squad Candid 😂</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="cousins-caption-card glass-card">
-                <div class="badge-family-container">
-                    <div class="family-badge-rotating">FOREVER FAMILY • ALWAYS TOGETHER • </div>
-                    <div class="family-badge-center">❤️</div>
-                </div>
-                <p class="cousins-text">
-                    "This squad is built different. Different faces, same madness. Different paths, same love. We may not always be together, but we carry each other everywhere we go. Muskan — you are the heartbeat of this family. 💖"
-                </p>
             </div>
         </div>
     </section>
@@ -371,7 +749,6 @@
                     <p>You are authentic, bold, and uniquely yourself. You stand firm in who you are and bloom in your own beautiful way.</p>
                 </div>
 
-                <!-- Added 3 new cards requested in prompt -->
                 <div class="glass-card amazing-card" data-tilt>
                     <div class="card-icon">🌍</div>
                     <h3>World Traveler</h3>
@@ -388,33 +765,6 @@
                     <div class="card-icon">👑</div>
                     <h3>Natural Leader</h3>
                     <p>You inspire without even trying. People look up to your confidence, your grace, and the effortless way you guide others.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 9: MAKE A WISH -->
-    <section id="wish-section" class="wish-section scroll-section">
-        <div class="section-container">
-            <h2 class="section-title">Close your eyes, Muskan. Make a wish. 🕯️</h2>
-            <p class="section-subtitle">Click the glowing 3D candle to blow it out and send your wish to the stars...</p>
-            
-            <div class="wish-cake-container">
-                <!-- Three.js Interactive Candle Canvas -->
-                <div id="wish-3d-container" class="canvas-3d-container"></div>
-                <div class="wish-instruction">Click the flame or press the button below</div>
-                <button id="blow-btn" class="cta-button blow-button">Blow the Candles 🌬️</button>
-            </div>
-
-            <!-- Blowout Success overlay card -->
-            <div id="wish-success-msg" class="wish-success-overlay">
-                <div class="success-content">
-                    <div class="star-burst">🌠</div>
-                    <h2>Your wish is on its way!</h2>
-                    <p class="success-glow-text">Your 24th year will be MAGICAL ✨</p>
-                    <p class="success-desc">May the universe conspire to bring you all the love, happiness, and grand success you deserve. 💖</p>
-                    
-                    <button id="social-wish-btn" class="cta-button share-wish-btn" style="margin-top:25px;">Share your wish 🌟</button>
                 </div>
             </div>
         </div>
@@ -536,11 +886,129 @@
                     </div>
                     <div class="gallery-caption">Candid Moments ❤️</div>
                 </div>
+
+                <!-- Frame 11 (New photo) -->
+                <div class="gallery-item" data-src="assets/muskan_new1.jpg" data-caption="Night Walks Puffer 🧥 — Cold mountain strolls and happy puffer jacket vibes.">
+                    <div class="gallery-frame">
+                        <img src="assets/muskan_new1.jpg" alt="Muskan new photo 1">
+                        <div class="frame-overlay">
+                            <span>View Memory 🔍</span>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">Night Walks Puffer 🧥</div>
+                </div>
+
+                <!-- Frame 12 (New photo) -->
+                <div class="gallery-item" data-src="assets/muskan_new2.jpg" data-caption="Golden Shrine 🕊️ — Posing with peace near the sacred golden statue.">
+                    <div class="gallery-frame">
+                        <img src="assets/muskan_new2.jpg" alt="Muskan new photo 2">
+                        <div class="frame-overlay">
+                            <span>View Memory 🔍</span>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">Golden Shrine 🕊️</div>
+                </div>
+
+                <!-- Frame 13 (New photo) -->
+                <div class="gallery-item" data-src="assets/muskan_new3.jpg" data-caption="Prayer Flags 🎏 — Standing gracefully among colorful prayer flags.">
+                    <div class="gallery-frame">
+                        <img src="assets/muskan_new3.jpg" alt="Muskan new photo 3">
+                        <div class="frame-overlay">
+                            <span>View Memory 🔍</span>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">Prayer Flags 🎏</div>
+                </div>
+
+                <!-- Frame 14 (New photo) -->
+                <div class="gallery-item" data-src="assets/muskan_new4.jpg" data-caption="Balcony Sparkles ✨ — Celebrating with warm shining light.">
+                    <div class="gallery-frame">
+                        <img src="assets/muskan_new4.jpg" alt="Muskan new photo 4">
+                        <div class="frame-overlay">
+                            <span>View Memory 🔍</span>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">Balcony Sparkles ✨</div>
+                </div>
+
+                <!-- Frame 15 (New photo) -->
+                <div class="gallery-item" data-src="assets/muskan_new5.png" data-caption="Sunset Walks 🏔️ — Cozy mountain hikes under a gorgeous sky.">
+                    <div class="gallery-frame">
+                        <img src="assets/muskan_new5.png" alt="Muskan new photo 5">
+                        <div class="frame-overlay">
+                            <span>View Memory 🔍</span>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">Sunset Walks 🏔️</div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 10: FOOTER -->
+    <!-- SECTION 7: COUSINS SQUAD (DEDICATED SECTION BETWEEN GALLERY AND WISH) -->
+    <section id="cousins-squad" class="cousins-section scroll-section">
+        <div class="section-container">
+            <h2 class="section-title">Our Crazy, Loving, Iconic Cousins Squad 👯‍♀️❤️</h2>
+            <p class="section-subtitle">Built different. Different faces, same madness. Same love.</p>
+            
+            <div class="cousins-grid-container">
+                <div class="cousin-frame-wrapper pos-posed">
+                    <div class="cousin-golden-frame">
+                        <img src="assets/cousins_posed.jpg" alt="Cousins Squad Posed" id="cousins-posed-img">
+                        <div class="frame-bokeh-glow"></div>
+                        <div class="frame-label">Squad Posed ✨</div>
+                    </div>
+                </div>
+                
+                <div class="cousin-frame-wrapper pos-candid">
+                    <div class="cousin-golden-frame" style="border-color: var(--color-rose-gold);">
+                        <img src="assets/cousins_candid.jpg" alt="Cousins Squad Candid" id="cousins-candid-img">
+                        <div class="frame-bokeh-glow" style="border-color: var(--color-rose-gold); box-shadow: inset 0 0 25px rgba(183, 110, 121, 0.25);"></div>
+                        <div class="frame-label">Squad Candid 😂</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cousins-caption-card glass-card">
+                <div class="badge-family-container">
+                    <div class="family-badge-rotating">FOREVER FAMILY • ALWAYS TOGETHER • </div>
+                    <div class="family-badge-center">❤️</div>
+                </div>
+                <p class="cousins-text">
+                    "This squad is built different. Different faces, same madness. Different paths, same love. We may not always be together — but we carry each other everywhere we go. Muskan, you are the heartbeat of this family. 💖"
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 9: MAKE A WISH -->
+    <section id="wish-section" class="wish-section scroll-section">
+        <div class="section-container">
+            <h2 class="section-title">Close your eyes, Muskan. Make a wish. 🕯️</h2>
+            <p class="section-subtitle">Click the glowing 3D candle to blow it out and send your wish to the stars...</p>
+            
+            <div class="wish-cake-container">
+                <!-- Three.js Interactive Candle Canvas -->
+                <div id="wish-3d-container" class="canvas-3d-container"></div>
+                <div class="wish-instruction">Click the flame or press the button below</div>
+                <button id="blow-btn" class="cta-button blow-button">Blow the Candles 🌬️</button>
+            </div>
+
+            <!-- Blowout Success overlay card -->
+            <div id="wish-success-msg" class="wish-success-overlay">
+                <div class="success-content">
+                    <div class="star-burst">🌠</div>
+                    <h2>Your wish is on its way!</h2>
+                    <p class="success-glow-text">Your 24th year will be MAGICAL ✨</p>
+                    <p class="success-desc">May the universe conspire to bring you all the love, happiness, and grand success you deserve. 💖</p>
+                    
+                    <button id="social-wish-btn" class="cta-button share-wish-btn" style="margin-top:25px;">Share your wish 🌟</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
     <footer>
         <div class="footer-particles" id="footer-canvas-container"></div>
         <div class="footer-content">

@@ -6,53 +6,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 1. DATA DEFINITIONS
-    // ==========================================
-    
-    // 24 Wishes (exactly as requested + completing the grid beautifully)
-    const wishes = [
-        "May every dream you dare to dream become your reality this year 🌟",
-        "May you find your biggest win in the place you least expected 🏆",
-        "May love find you in ways that take your breath away 💕",
-        "May your confidence shine louder than any doubt 💪",
-        "May this year be your most traveled, most adventured yet ✈️",
-        "May every morning feel like a new possibility waiting for you 🌅",
-        "May the people around you finally match your energy ✨",
-        "May your career take a leap that makes you proud 🚀",
-        "May you always choose yourself first, without guilt 🦋",
-        "May happiness become your permanent address this year 🏡",
-        "May your laughter always be the loudest in the room 😂",
-        "May every tear you cry be only from joy from now on 💧",
-        "May you always know exactly how loved you truly are 💖",
-        "May your heart feel full and your burdens feel light 🌸",
-        "May your friendships grow deeper and your circle grow stronger 👯",
-        "May every risk you take this year pay off beautifully 🎯",
-        "May you discover new parts of yourself that blow your mind 🌈",
-        "May good health and glowing energy be your constant companions 💫",
-        "May your family always be your anchor and your wings 🕊️",
-        "May peace find you even in the most chaotic moments 🌊",
-        "May you celebrate more wins than you ever thought possible 🥂",
-        "May your story inspire everyone who is lucky enough to know you 📖",
-        "May 24 be the year everything you have worked for finally clicks 🔑",
-        "May today remind you: you are extraordinary, Muskan. Always. 🎂✨"
-    ];
-
-    // 10 Quotes for Carousel (rotating muskan_buddha.jpg, muskan_flags.jpg, muskan_mountain.jpg)
-    const quotes = [
-        { text: "She is clothed in strength and dignity.", author: "Proverbs 31:25", image: "assets/muskan_buddha.jpg" },
-        { text: "You are never too old to set another goal or dream a new dream.", author: "C.S. Lewis", image: "assets/muskan_flags.jpg" },
-        { text: "A sister is both your mirror and your opposite.", author: "Elizabeth Fishel", image: "assets/muskan_mountain.jpg" },
-        { text: "The most beautiful thing you can wear is confidence.", author: "Blake Lively", image: "assets/muskan_buddha.jpg" },
-        { text: "Do not wait for the perfect moment — take it and make it perfect.", author: "Unknown", image: "assets/muskan_flags.jpg" },
-        { text: "She believed she could, so she did.", author: "R.S. Grey", image: "assets/muskan_mountain.jpg" },
-        { text: "At 24, the whole world is still yours to conquer. Go get it, queen. 👑", author: "Unknown", image: "assets/muskan_buddha.jpg" },
-        { text: "You are enough. You have always been enough. You will always be enough.", author: "Unknown", image: "assets/muskan_flags.jpg" },
-        { text: "Behind every strong woman is herself.", author: "Unknown", image: "assets/muskan_mountain.jpg" },
-        { text: "Life is not measured by the number of breaths we take, but by the moments that take our breath away.", author: "Unknown", image: "assets/muskan_buddha.jpg" }
-    ];
-
-    // ==========================================
-    // 2. PROCEDURAL SOUND ENGINE (WEB AUDIO API)
+    // 1. PROCEDURAL SOUND ENGINE (WEB AUDIO API)
     // ==========================================
     class SoundEngine {
         constructor() {
@@ -61,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.synthInterval = null;
             this.chordIndex = 0;
             this.isMuted = true;
+            this.audioEl = null;
 
             // Warm luxury chords (Ebm7 - Ab7 - Dbmaj7 - Gbmaj7)
             this.chords = [
@@ -80,6 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
             this.masterGain = this.ctx.createGain();
             this.masterGain.gain.setValueAtTime(0.3, this.ctx.currentTime); // Default volume 30%
             this.masterGain.connect(this.ctx.destination);
+
+            // Initialize Audio element for Mixkit/Pixabay MP3 Birthday Track
+            this.audioEl = new Audio();
+            this.audioEl.src = 'https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f28cf.mp3'; // Music box happy birthday
+            this.audioEl.loop = true;
+            this.audioEl.crossOrigin = "anonymous";
+            
+            // Connect HTML5 audio to Web Audio API for volume control
+            const source = this.ctx.createMediaElementSource(this.audioEl);
+            source.connect(this.masterGain);
         }
 
         setVolume(percent) {
@@ -95,17 +60,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             this.isMuted = false;
             
-            // Loop backing ambient sequence
+            // Play MP3
+            this.audioEl.play().catch(err => {
+                console.warn("Audio element autoplay failed, falling back to Web Audio Synth loop:", err);
+                this.startSynthBGM();
+            });
+        }
+
+        startSynthBGM() {
+            // Loop backing ambient sequence in case MP3 fails
             const playChords = () => {
                 if (this.isMuted) return;
                 const notes = this.chords[this.chordIndex];
                 
-                // Play chord notes gently
                 notes.forEach((midi, i) => {
                     this.triggerAmbientNote(midi, 0.05, i * 0.15, 4.5);
                 });
 
-                // Sweet arpeggiated chime notes above the chord
                 setTimeout(() => {
                     if (this.isMuted) return;
                     const melodyNotes = [notes[2] + 12, notes[3] + 12, notes[4] + 12];
@@ -123,6 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         stopBGM() {
             this.isMuted = true;
+            if (this.audioEl) {
+                this.audioEl.pause();
+            }
             if (this.synthInterval) {
                 clearInterval(this.synthInterval);
                 this.synthInterval = null;
@@ -133,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return 440 * Math.pow(2, (midi - 69) / 12);
         }
 
-        // Gentler sine synthesizer for background chords
         triggerAmbientNote(midi, vol, delay, duration) {
             const time = this.ctx.currentTime + delay;
             const freq = this.midiToFreq(midi);
@@ -142,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(freq, time);
 
-            // High pass filter for warm tone
             const filter = this.ctx.createBiquadFilter();
             filter.type = 'lowpass';
             filter.frequency.setValueAtTime(800, time);
@@ -160,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
             osc.stop(time + duration);
         }
 
-        // Tapping chime synthesis for cards and hover effects
         triggerChime(midi, vol, delay, duration) {
             this.init();
             if (this.ctx.state === 'suspended') this.ctx.resume();
@@ -239,8 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
     audioBtn.addEventListener('click', () => {
         if (sound.isMuted) {
             audioBtn.classList.remove('muted');
+            audioBtn.classList.add('playing'); // Add pulse ring class
             sound.startBGM();
         } else {
+            audioBtn.classList.remove('playing');
             audioBtn.classList.add('muted');
             sound.stopBGM();
         }
@@ -251,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 3. GLOBAL THREE.JS CANVAS (Background Stars, Balloons, Petals)
+    // 2. GLOBAL THREE.JS CANVAS (Background Stars, Balloons, Petals)
     // ==========================================
     let glScene, glCamera, glRenderer;
     let glBalloons = [];
@@ -462,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 4. HERO CANVAS (3D cake + spin metallic "24")
+    // 3. HERO CANVAS (3D cake + spin metallic "24")
     // ==========================================
     let heroScene, heroCamera, heroRenderer;
     let heroCake, heroNumber24;
@@ -606,6 +579,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const flamesGroup = new THREE.Group();
         flamesGroup.name = 'hero-flames';
 
+
         candlePos.forEach(pos => {
             const candle = new THREE.Mesh(candleGeo, candleMat);
             candle.position.set(pos.x, pos.y, pos.z);
@@ -665,14 +639,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. ENVELOPE NOTE INTERACTION
+    // 4. ENVELOPE NOTE INTERACTION
     // ==========================================
-    const envelope = document.getElementById('letter-envelope');
+    const envelopeElement = document.getElementById('letter-envelope');
     const envelopeWrapper = document.querySelector('.envelope-wrapper');
     const closeBtn = document.getElementById('close-letter');
 
-    envelope.addEventListener('click', (e) => {
-        // Prevent click events from firing twice or breaking on close
+    envelopeElement.addEventListener('click', (e) => {
         if (envelopeWrapper.classList.contains('expanded')) return;
         
         if (!envelopeWrapper.classList.contains('open')) {
@@ -683,7 +656,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 envelopeWrapper.classList.add('expanded');
                 sound.triggerChime(79, 0.12, 0.1, 1.5);
-            }, 900);
+            }, 950);
         }
     });
 
@@ -693,74 +666,39 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setTimeout(() => {
             envelopeWrapper.classList.remove('open');
-        }, 600);
+        }, 650);
     });
 
     // ==========================================
-    // 6. POPULATE 24 WISHES GRID
+    // 5. 24 WISHES CARD TRIGGERS (Mobile Flips + Sound Chimes)
     // ==========================================
-    const wishesGrid = document.getElementById('wishes-container');
-    if (wishesGrid) {
-        wishes.forEach((wishText, idx) => {
-            const num = idx + 1;
-            const card = document.createElement('div');
-            card.className = 'wish-card-flip';
-            card.setAttribute('tabindex', '0');
-            card.innerHTML = `
-                <div class="wish-card-front">
-                    <span class="wish-number">${String(num).padStart(2, '0')}</span>
-                    <span class="wish-sparkle">✦</span>
-                    <h4>Wish #${num}</h4>
-                </div>
-                <div class="wish-card-back">
-                    <p>${wishText}</p>
-                </div>
-            `;
-            wishesGrid.appendChild(card);
-
-            // Add soft synthesised chime sound on hover/focus flip
-            card.addEventListener('mouseenter', () => {
-                sound.triggerChime(64 + (num % 12), 0.08, 0, 1.0);
-            });
-            card.addEventListener('focus', () => {
-                sound.triggerChime(64 + (num % 12), 0.08, 0, 1.0);
-            });
-            // Click support on mobile
-            card.addEventListener('click', () => {
-                card.classList.toggle('flipped');
-            });
+    const wishCards = document.querySelectorAll('.wish-card-flip');
+    wishCards.forEach((card, index) => {
+        // Hover synthesised chimes
+        card.addEventListener('mouseenter', () => {
+            sound.triggerChime(60 + (index % 12), 0.06, 0, 1.0);
         });
-    }
-
-    // ==========================================
-    // 7. SWIPER QUOTES CAROUSEL
-    // ==========================================
-    const swiperWrapper = document.getElementById('quotes-swiper-wrapper');
-    if (swiperWrapper) {
-        quotes.forEach(q => {
-            const slide = document.createElement('div');
-            slide.className = 'swiper-slide';
-            slide.innerHTML = `
-                <div class="quote-card">
-                    <div class="quote-card-bg" style="background-image: url('${q.image}');"></div>
-                    <div class="quote-card-content">
-                        <div class="quote-mark">“</div>
-                        <p class="quote-text">${q.text}</p>
-                        <div class="quote-underline"></div>
-                        <p class="quote-author">${q.author}</p>
-                    </div>
-                </div>
-            `;
-            swiperWrapper.appendChild(slide);
+        card.addEventListener('focus', () => {
+            sound.triggerChime(60 + (index % 12), 0.06, 0, 1.0);
         });
+        
+        // Tap/click toggling for mobile layout
+        card.addEventListener('click', () => {
+            card.classList.toggle('flipped');
+            sound.triggerChime(65 + (index % 12), 0.08, 0, 1.0);
+        });
+    });
 
-        // Initialize Swiper.js
+    // ==========================================
+    // 6. SWIPER QUOTES CAROUSEL (Initialization)
+    // ==========================================
+    if (document.querySelector('.quotes-swiper')) {
         const swiper = new Swiper('.quotes-swiper', {
             slidesPerView: 1,
             centeredSlides: true,
             loop: true,
             autoplay: {
-                delay: 8000, // 8-second auto-advance
+                delay: 5000, // 5-second auto-advance
                 disableOnInteraction: false,
             },
             pagination: {
@@ -785,84 +723,175 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 8. GSAP SCROLLTIMELINE DESKTOP PINNING
+    // 7. GSAP SCROLL TRIGGERS REVEAL (Timeline & Cousins)
     // ==========================================
     gsap.registerPlugin(ScrollTrigger);
 
-    function setupTimelineAnimations() {
-        const wrapper = document.getElementById('timeline-scroll-wrapper');
-        const container = document.getElementById('timeline-container');
-        const activeBar = document.getElementById('timeline-progress-active');
-        
-        if (!container || !wrapper) return;
-
-        // Calculate translation width
-        const getScrollAmount = () => {
-            return -(container.scrollWidth - window.innerWidth + 200); // 200px offset margins
-        };
-
-        let tlTrigger = null;
-
-        // Desktop Pinning ScrollTrigger
-        const initScrollPin = () => {
-            if (window.innerWidth > 768) {
-                // Set timeline row display
-                container.style.transform = 'none';
-
-                tlTrigger = gsap.to(container, {
-                    x: getScrollAmount,
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: '#timeline-section',
-                        start: "top top",
-                        end: () => `+=${container.scrollWidth - window.innerWidth}`,
-                        pin: true,
-                        scrub: 1,
-                        invalidateOnRefresh: true,
-                        onUpdate: (self) => {
-                            // Link active progress line to scrub timeline scroll progress
-                            if (activeBar) {
-                                activeBar.style.width = `${self.progress * 100}%`;
-                            }
-                        }
-                    }
-                });
-            } else {
-                // Clear any leftover inline transforms
-                container.style.transform = 'none';
-                if (activeBar) activeBar.style.width = '4px'; // static vertical height indicator
-            }
-        };
-
-        initScrollPin();
-
-        // Responsive re-init
-        window.addEventListener('resize', () => {
-            if (tlTrigger) {
-                tlTrigger.scrollTrigger.kill();
-                tlTrigger.kill();
-                tlTrigger = null;
-            }
-            initScrollPin();
+    function setupScrollReveals() {
+        // Sibling envelop trigger fade-in
+        gsap.from('.envelope-wrapper', {
+            scrollTrigger: {
+                trigger: '#message',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            y: 50,
+            duration: 1.3,
+            ease: "power3.out"
         });
 
-        // Stagger fade-in of elements on vertical scrolling on mobile
-        gsap.utils.toArray('.timeline-item').forEach(item => {
-            gsap.from(item.querySelector('.timeline-card'), {
+        // 24 Wishes grid cards entry
+        gsap.from('#wishes-container .wish-card-flip', {
+            scrollTrigger: {
+                trigger: '#wishes',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            scale: 0.82,
+            y: 35,
+            duration: 0.85,
+            stagger: 0.1, // Staggered entrance animation: 100ms
+            ease: "back.out(1.4)"
+        });
+
+        // Swiper quotes carousel fade-in
+        gsap.from('.quotes-swiper', {
+            scrollTrigger: {
+                trigger: '#quotes',
+                start: "top 80%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            y: 40,
+            duration: 1.0,
+            ease: "power2.out"
+        });
+
+        // Alternating Vertical Timeline elements slide/fade reveals
+        gsap.utils.toArray('.timeline-vertical-item').forEach(item => {
+            const isLeft = item.classList.contains('left');
+            gsap.from(item, {
                 scrollTrigger: {
                     trigger: item,
-                    start: "top 80%",
+                    start: "top 85%",
                     toggleActions: "play none none none"
                 },
                 opacity: 0,
-                y: 35,
-                duration: 0.9,
+                x: isLeft ? -80 : 80,
+                duration: 1.0,
                 ease: "power2.out"
             });
         });
+
+        // Cousins Squad:posed image slides in from left
+        gsap.from('.pos-posed', {
+            scrollTrigger: {
+                trigger: '#cousins-squad',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            x: -120,
+            duration: 1.2,
+            ease: "power3.out"
+        });
+
+        // Cousins Squad: candid image slides in from right
+        gsap.from('.pos-candid', {
+            scrollTrigger: {
+                trigger: '#cousins-squad',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            x: 120,
+            duration: 1.2,
+            ease: "power3.out"
+        });
+
+        // Cousins Squad text caption reveal
+        gsap.from('.cousins-caption-card', {
+            scrollTrigger: {
+                trigger: '#cousins-squad',
+                start: "top 55%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            scale: 0.94,
+            duration: 1.0,
+            ease: "power2.out"
+        });
+
+        // Amazing cards Grid stagger entry
+        gsap.from('.amazing-card', {
+            scrollTrigger: {
+                trigger: '#amazing',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            y: 45,
+            duration: 0.85,
+            stagger: 0.08,
+            ease: "power2.out"
+        });
+
+        // Wish Cake container entry
+        gsap.from('.wish-cake-container', {
+            scrollTrigger: {
+                trigger: '#wish-section',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            scale: 0.88,
+            duration: 1.1,
+            ease: "back.out(1.2)"
+        });
+
+        // Gallery items stagger entry
+        gsap.from('.gallery-item', {
+            scrollTrigger: {
+                trigger: '#gallery',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            y: 45,
+            duration: 0.85,
+            stagger: 0.08,
+            ease: "power2.out"
+        });
     }
 
-    setupTimelineAnimations();
+    // ==========================================
+    // 8. COUSINS SQUAD: SVG petals spawn
+    // ==========================================
+    function spawnCousinsPetals() {
+        const container = document.getElementById('cousins-squad');
+        if (!container) return;
+        
+        const petalCount = 12;
+        for (let i = 0; i < petalCount; i++) {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("class", "cousins-petal");
+            svg.setAttribute("viewBox", "0 0 30 30");
+            svg.innerHTML = `<path d="M15 0 C25 10, 25 25, 15 30 C5 25, 5 10, 15 0" fill="#B76E79" />`;
+            
+            // Random styling spreads
+            svg.style.left = `${Math.random() * 100}%`;
+            svg.style.animationDuration = `${Math.random() * 6 + 6}s`;
+            svg.style.animationDelay = `${Math.random() * 5}s`;
+            
+            const size = Math.random() * 14 + 14;
+            svg.style.width = `${size}px`;
+            svg.style.height = `${size}px`;
+            
+            container.appendChild(svg);
+        }
+    }
 
     // ==========================================
     // 9. THREE.JS WISH SCENE (Interactive Candle Blowout)
@@ -1241,23 +1270,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Initial page load Double Side Confetti Cannon burst!
                 confetti({
-                    particleCount: 70,
+                    particleCount: 80,
                     angle: 60,
                     spread: 60,
                     origin: { x: 0, y: 0.8 }
                 });
                 confetti({
-                    particleCount: 70,
+                    particleCount: 80,
                     angle: 120,
                     spread: 60,
                     origin: { x: 1, y: 0.8 }
                 });
+
+                // Auto-trigger confetti explosion on load if birthday has arrived
+                const now = new Date().getTime();
+                const birthdayTarget = new Date('2026-05-26T00:00:00').getTime();
+                if (birthdayTarget - now <= 0) {
+                    setTimeout(() => {
+                        confetti({
+                            particleCount: 150,
+                            spread: 90,
+                            origin: { y: 0.6 }
+                        });
+                    }, 500);
+                }
 
                 // Initialize heavy Three.js environments after loader closes
                 initGlobalBg3D();
                 initHeroScene();
                 initWishScene();
                 setupScrollReveals();
+                spawnCousinsPetals(); // Spawn petals inside Cousins Squad
 
                 // Setup Typewriter subtitles in Hero
                 new Typed('#typed-welcome', {
@@ -1286,6 +1329,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Trigger music play (or toggle state indicator)
             if (sound.isMuted) {
                 audioBtn.classList.remove('muted');
+                audioBtn.classList.add('playing');
                 sound.startBGM();
             }
 
@@ -1305,27 +1349,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 12. LIGHTBOX CAPTION MODAL OVERLAYS
+    // 12. LIGHTBOX CAPTION MODAL OVERLAYS (Fixes & Keyboard Navigation)
     // ==========================================
-    const galleryItems = document.querySelectorAll('.gallery-item');
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxCap = document.getElementById('lightbox-caption');
     const lightboxClose = document.querySelector('.lightbox-close');
 
-    galleryItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const src = item.getAttribute('data-src');
-            const cap = item.getAttribute('data-caption');
+    let currentGalleryIndex = 0;
+    const galleryData = [];
 
-            if (lightboxImg && lightboxCap && lightbox) {
-                lightboxImg.src = src;
-                lightboxCap.innerText = cap;
-                lightbox.classList.add('active');
-                sound.triggerChime(69, 0.08, 0, 1.5); // soft bell sound
-            }
+    // Query and store gallery images
+    const galleryCards = document.querySelectorAll('.gallery-item');
+    galleryCards.forEach((card, index) => {
+        galleryData.push({
+            src: card.getAttribute('data-src'),
+            caption: card.getAttribute('data-caption')
+        });
+        
+        card.addEventListener('click', () => {
+            currentGalleryIndex = index;
+            openLightbox(index);
         });
     });
+
+    function openLightbox(index) {
+        if (index < 0 || index >= galleryData.length) return;
+        const item = galleryData[index];
+        if (lightboxImg && lightboxCap && lightbox) {
+            lightboxImg.src = item.src;
+            lightboxCap.innerText = item.caption;
+            lightbox.classList.add('active');
+            sound.triggerChime(69, 0.08, 0, 1.5); // soft bell sound
+        }
+    }
 
     if (lightboxClose) {
         lightboxClose.addEventListener('click', () => {
@@ -1341,8 +1398,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Keyboard support: Escape closes, Arrows navigate prev/next
+    window.addEventListener('keydown', (e) => {
+        if (!lightbox || !lightbox.classList.contains('active')) return;
+        if (e.key === 'Escape') {
+            lightbox.classList.remove('active');
+        } else if (e.key === 'ArrowRight') {
+            currentGalleryIndex = (currentGalleryIndex + 1) % galleryData.length;
+            openLightbox(currentGalleryIndex);
+        } else if (e.key === 'ArrowLeft') {
+            currentGalleryIndex = (currentGalleryIndex - 1 + galleryData.length) % galleryData.length;
+            openLightbox(currentGalleryIndex);
+        }
+    });
+
     // ==========================================
-    // 13. COUNTDOWN TO MAY 26, 2026
+    // 13. COUNTDOWN TO MAY 26, 2026 (Birthday Arrived Banner)
     // ==========================================
     const birthdayTarget = new Date('2026-05-26T00:00:00').getTime();
 
@@ -1356,8 +1427,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // If birthday has already arrived or passed!
         if (diff <= 0) {
             countdownWrapper.innerHTML = `
-                <div class="birthday-now-glow" style="font-family:var(--font-serif);font-size:2.0rem;color:var(--color-gold-light);text-shadow:0 0 20px rgba(212,175,55,0.85);font-weight:700;">
-                    You Are NOW 24 Years Old! 🎉
+                <div class="birthday-now-glow">
+                    🎉 TODAY IS THE DAY! Muskan is officially 24! 🎉
                 </div>
             `;
             return;
@@ -1378,127 +1449,12 @@ document.addEventListener('DOMContentLoaded', () => {
     tickCountdown();
 
     // ==========================================
-    // 14. GSAP SCROLL TRIGGERS REVEAL
-    // ==========================================
-    function setupScrollReveals() {
-        // Sibling envelop trigger fade-in
-        gsap.from('.envelope-wrapper', {
-            scrollTrigger: {
-                trigger: '#message',
-                start: "top 75%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            y: 50,
-            duration: 1.3,
-            ease: "power3.out"
-        });
-
-        // 24 Wishes grid cards entry
-        gsap.from('#wishes-container .wish-card-flip', {
-            scrollTrigger: {
-                trigger: '#wishes',
-                start: "top 75%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            scale: 0.82,
-            y: 35,
-            duration: 0.85,
-            stagger: 0.04,
-            ease: "back.out(1.4)"
-        });
-
-        // Swiper quotes carousel fade-in
-        gsap.from('.quotes-swiper', {
-            scrollTrigger: {
-                trigger: '#quotes',
-                start: "top 80%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            y: 40,
-            duration: 1.0,
-            ease: "power2.out"
-        });
-
-        // Cousinsposed frame fade-in
-        gsap.from('.cousin-frame-wrapper', {
-            scrollTrigger: {
-                trigger: '#cousins-squad',
-                start: "top 75%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            y: 60,
-            duration: 1.2,
-            stagger: 0.25,
-            ease: "power3.out"
-        });
-
-        // Cousins text card
-        gsap.from('.cousins-caption-card', {
-            scrollTrigger: {
-                trigger: '#cousins-squad',
-                start: "top 55%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            scale: 0.94,
-            duration: 1.0,
-            ease: "power2.out"
-        });
-
-        // Amazing cards Grid stagger entry
-        gsap.from('.amazing-card', {
-            scrollTrigger: {
-                trigger: '#amazing',
-                start: "top 75%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            y: 45,
-            duration: 0.85,
-            stagger: 0.08,
-            ease: "power2.out"
-        });
-
-        // Wish Cake container entry
-        gsap.from('.wish-cake-container', {
-            scrollTrigger: {
-                trigger: '#wish-section',
-                start: "top 75%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            scale: 0.88,
-            duration: 1.1,
-            ease: "back.out(1.2)"
-        });
-
-        // Gallery items stagger entry
-        gsap.from('.gallery-item', {
-            scrollTrigger: {
-                trigger: '#gallery',
-                start: "top 75%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            y: 45,
-            duration: 0.85,
-            stagger: 0.08,
-            ease: "power2.out"
-        });
-    }
-
-    // ==========================================
     // 15. SHARE LINKS & WHATSAPP INTEGRATION
     // ==========================================
     const copyLinkBtn = document.getElementById('share-btn');
     const waShareBtn = document.getElementById('whatsapp-share-btn');
     const wishShareBtn = document.getElementById('social-wish-btn');
 
-    const shareTitle = "Happy 24th Birthday Muskan! 🎂✨";
     const shareText = "Check out this beautiful interactive 3D birthday celebration site built for Muskan Singla's 24th birthday! 🌸";
 
     function copyToClipboard() {

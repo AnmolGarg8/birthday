@@ -1207,13 +1207,27 @@ document.addEventListener('DOMContentLoaded', () => {
         // 5. Trigger Canvas Fireworks backdrop loop
         startFireworksBackdrop();
 
-        // 6. Reveal success overlay card
+        // 6. Reveal Cake Cutting Animation
+        setTimeout(() => {
+            const cakeCut = document.getElementById('cake-cut-overlay');
+            if (cakeCut) {
+                cakeCut.classList.add('active');
+            }
+        }, 500);
+
+        // 7. Reveal success overlay card (Delayed for cake animation)
         setTimeout(() => {
             const overlay = document.getElementById('wish-success-msg');
             if (overlay) {
                 overlay.classList.add('active');
             }
-        }, 1200);
+            
+            // Cleanup cake animation overlay
+            const cakeCut = document.getElementById('cake-cut-overlay');
+            if (cakeCut) {
+                cakeCut.classList.remove('active');
+            }
+        }, 3200);
     }
 
     // Attach to Blow candles button
@@ -1860,3 +1874,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     animateSparkles();
 });
+

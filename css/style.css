@@ -2797,3 +2797,53 @@ html, body {
 .hero-polaroid-left img {
     object-position: top center !important;
 }
+
+/* Cake Cutting Animation Overlay */
+.cake-cut-overlay {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99999;
+    pointer-events: none;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 300px; height: 300px;
+}
+.full-cake { font-size: 8rem; position: absolute; filter: drop-shadow(0 0 20px rgba(255,255,255,0.4)); }
+.cake-slice-left, .cake-slice-right { font-size: 8rem; position: absolute; opacity: 0; filter: drop-shadow(0 0 20px rgba(255,255,255,0.4)); }
+.knife-emoji { font-size: 8rem; position: absolute; top: -120px; right: -80px; opacity: 0; transform: rotate(-45deg); filter: drop-shadow(0 0 10px rgba(255,255,255,0.8)); }
+
+.cake-cut-overlay.active { display: flex; }
+
+.cake-cut-overlay.active .knife-emoji {
+    animation: knife-cut 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+.cake-cut-overlay.active .full-cake {
+    animation: cake-hide 0.1s 1.2s forwards;
+}
+.cake-cut-overlay.active .cake-slice-left {
+    animation: slice-slide-left 1.5s 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.cake-cut-overlay.active .cake-slice-right {
+    animation: slice-slide-right 1.5s 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes knife-cut {
+    0% { opacity: 0; transform: translate(120px, -120px) rotate(-30deg); }
+    30% { opacity: 1; transform: translate(30px, -30px) rotate(-45deg); }
+    60% { transform: translate(0px, 0px) rotate(-60deg); } /* Wait right above */
+    70% { transform: translate(-20px, 20px) rotate(-60deg); } /* Slice down! */
+    100% { opacity: 0; transform: translate(-60px, 60px) rotate(-60deg); }
+}
+@keyframes cake-hide {
+    to { opacity: 0; }
+}
+@keyframes slice-slide-left {
+    0% { opacity: 1; transform: translateX(0) rotate(0deg); }
+    100% { opacity: 1; transform: translateX(-50px) rotate(-15deg); }
+}
+@keyframes slice-slide-right {
+    0% { opacity: 1; transform: translateX(0) rotate(0deg); }
+    100% { opacity: 1; transform: translateX(50px) rotate(15deg); }
+}

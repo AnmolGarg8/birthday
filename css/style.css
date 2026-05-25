@@ -701,6 +701,8 @@ body {
     background-position: center;
     filter: blur(25px) brightness(0.2) url(#heat-wave-filter);
     z-index: -1;
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);
 }
 
 .envelope-wrapper {
@@ -1568,6 +1570,17 @@ body {
     margin-bottom: 22px;
     filter: drop-shadow(0 0 8px rgba(183, 110, 121, 0.5));
     display: inline-block;
+}
+
+.section-title {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    color: var(--color-gold-light); /* Fallback */
+    background: linear-gradient(135deg, var(--color-gold-light) 0%, var(--color-rose-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
 }
 
 .amazing-card h3 {

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 24th Birthday, Muskan! 🎂</title>
+    <meta name="description" content="A magical, interactive 3D birthday celebration dedicated to Muskan Singla. Turning 24 on May 26, 2026.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styleheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Canvas for Global Sparkle Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Cursor Sparkle Trail Canvas -->
+    <canvas id="trail-canvas"></canvas>
+
+    <!-- Loading Screen -->
+    <div id="loader" class="loader-overlay">
+        <div class="loader-content">
+            <div class="loader-cake">🎂</div>
+            <h2 class="loader-title">Preparing Muskan's Special Day...</h2>
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <div id="loader-percent" class="loader-percent">0%</div>
+        </div>
+    </div>
+
+    <!-- Music Control Float -->
+    <button id="audio-toggle" class="audio-control-btn" aria-label="Toggle Music" title="Play music">
+        <div class="music-icon">🎵</div>
+        <div class="sound-waves">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+        <!-- Three.js Interactive Cake Canvas -->
+        <div id="hero-3d-container" class="canvas-3d-container"></div>
+        
+        <div class="hero-text-content">
+            <div class="hero-flex-wrapper">
+                <div class="hero-info-side">
+                    <h1 class="hero-title animate-glow">Happy 24th Birthday, Muskan! 🎂</h1>
+                    <p class="hero-subtext"><span id="typed-welcome"></span></p>
+                    
+                    <!-- Live Countdown Timer -->
+                    <div id="countdown" class="countdown-container">
+                        <div class="countdown-title">Counting down to the magic... ✨</div>
+                        <div class="countdown-grid">
+                            <div class="countdown-item">
+                                <span id="days" class="time-num">00</span>
+                                <span class="time-label">Days</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span id="hours" class="time-num">00</span>
+                                <span class="time-label">Hours</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span id="minutes" class="time-num">00</span>
+                                <span class="time-label">Mins</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span id="seconds" class="time-num">00</span>
+                                <span class="time-label">Secs</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="celebrate-btn" class="cta-button">Celebrate Now ✨</button>
+                </div>
+                <div class="hero-photo-side">
+                    <div class="hero-polaroid">
+                        <img src="assets/muskan_jaipur.jpg" alt="Muskan Singla Hawa Mahal">
+                        <div class="hero-polaroid-caption">Muskan Singla ✨</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <span class="mouse-icon"></span>
+            <span class="scroll-arrow"></span>
+        </div>
+    </section>
+
+    <!-- Birthday Message from Sibling -->
+    <section id="message" class="message-section scroll-section">
+        <div class="section-container">
+            <h2 class="section-title">A Message From My Heart... 💖</h2>
+            <div class="glass-card message-card">
+                <div class="card-glow"></div>
+                <div class="sibling-pfp-container">
+                    <img src="assets/muskan_pink.jpg" alt="Muskan Singla" class="sibling-pfp-img">
+                </div>
+                <div class="message-flex-container">
+                    <div class="message-photo-side">
+                        <div class="message-polaroid">
+                            <img src="assets/muskan_mountain.jpg" alt="Muskan in the mountains">
+                            <div class="polaroid-caption">Muskan • 24 ✨</div>
+                        </div>
+                    </div>
+                    <div class="message-text">
+                        <p class="greeting">Dear Muskan,</p>
+                        <p class="body-letter">
+                            You are not just my sister — you are my favorite person in the world. 
+                            Watching you grow into the beautiful, strong, and kind soul you are fills my heart 
+                            with so much pride. On your 24th birthday, I want you to know that every single day 
+                            you make this family brighter. I love you more than words can ever say.
+                        </p>
+                        <p class="valediction">Happy Birthday, Muskan Singla! 🌸</p>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 24 Wishes for 24 Years Section -->
+    <section id="wishes" class="wishes-section scroll-section">
+        <div class="section-container">
+            <h2 class="section-title">24 Wishes for 24 Beautiful Years ✨</h2>
+            <p class="section-subtitle">Hover to unlock each magical wish for your year ahead</p>
+            
+            <div class="wishes-grid" id="wishes-container">
+                <!-- 24 wish cards will be dynamically loaded by JavaScript for maintainability & clean code -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Inspirational Quotes Section (Auto-playing Slider) -->
+    <section id="quotes" class="quotes-section scroll-section">
+        <div class="section-container">
+            <h2 class="section-title font-serif">Inspirational Words for a Queen 👑</h2>
+            
+            <div class="quotes-carousel-container">
+                <div class="quotes-carousel-wrapper" id="quotes-wrapper">
+                    <!-- Cards will be populated by JS -->
+                </div>
+                <div class="carousel-dots" id="carousel-dots">
+                    <!-- Dots will be populated by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- "Why You're Amazing" Section -->
+    <section id="amazing" class="amazing-section scroll-section">
+        <div class="section-container">
+            <h2 class="section-title">Why You Are Absolutely Incredible 🌟</h2>
+            
+            <div class="amazing-cards-container">
+                <div class="glass-card amazing-card" data-tilt>
+                    <div class="card-icon">🌟</div>
+                    <h3>Radiant Smile</h3>
+                    <p>Your smile is like a sudden burst of sunlight on a cloudy day. It literally lights up any room you walk into.</p>
+                </div>
+                <div class="glass-card amazing-card" data-tilt>
+                    <div class="card-icon">💖</div>
+                    <h3>Kindness Superpower</h3>
+                    <p>You have a rare ability to understand and feel for others. Your empathy and warmth make everyone feel safe and loved.</p>
+                </div>
+                <div class="glass-card amazing-card" data-tilt>
+                    <div class="card-icon">💪</div>
+                    <h3>Unshakeable Resolve</h3>
+                    <p>You never back down, no matter what hurdles life throws. Your strength and perseverance inspire everyone around you.</p>
+                </div>
+                <div class="glass-card amazing-card" data-tilt>
+                    <div class="card-icon">✨</div>
+                    <h3>Making Others Special</h3>
+                    <p>You have a gift of lifting people up. You always find the good in others and make them feel uniquely valued.</p>
+                </div>
+                <div class="glass-card amazing-card" data-tilt>
+                    <div class="card-icon">🦋</div>
+                    <h3>Fearlessly You</h3>
+                    <p>You are authentic, bold, and uniquely yourself. You stand firm in who you are and bloom in your own beautiful way.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Memory Gallery Section -->
+    <section id="gallery" class="gallery-section scroll-section">
+        <div class="section-container">
+            <h2 class="section-title">Our Golden Memories 📸</h2>
+            <p class="section-subtitle">A collection of beautiful moments captured in time</p>
+            
+            <div class="gallery-grid">
+                <!-- Frame 1 (Actual Photo) -->
+                <div class="gallery-item" data-src="assets/muskan_pink.jpg" data-caption="Your stunning smile in traditional pink attire — forever gorgeous! 🥰">
+                    <div class="gallery-frame">
+                        <img src="assets/muskan_pink.jpg" alt="Muskan in traditional attire">
+                        <div class="frame-overlay">
+                            <span>View Memory 🔍</span>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">Our favorite memory 🥰</div>
+                </div>
+
+                <!-- Frame 2 (Actual Photo) -->
+                <div class="gallery-item" data-src="assets/muskan_mountain.jpg" data-caption="Chasing golden sunsets in the majestic mountains 🏔️">
+                    <div class="gallery-frame">
+                        <img src="assets/muskan_mountain.jpg" alt="Muskan in mountains during sunset">
+                        <div class="frame-overlay">
+                            <span>View Memory 🔍</span>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">Forever my person 💕</div>
+                </div>
+
+                <!-- Frame 3 (Actual Photo) -->
+                <div class="gallery-item" data-src="assets/muskan_jaipur.jpg" data-caption="Exploring the royal Hawa Mahal, looking like royalty yourself! 👑">
+                    <div class="gallery-frame">
+                        <img src="assets/muskan_jaipur.jpg" alt="Muskan at Hawa Mahal, Jaipur">
+                        <div class="frame-overlay">
+                            <span>View Memory 🔍</span>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">Exploring the world ✈️</div>
+                </div>
+
+                <!-- Frame 4 (Themed Greeting Card) -->
+                <div class="gallery-item themed-card" data-src="" data-caption="No matter where life takes us, we will always be side by side. 👯‍♀️">
+                    <div class="gallery-frame text-card rose-gold-gradient">
+                        <div class="text-card-content">
+                            <h3>Partners in Crime</h3>
+                            <p>Through every laugh, every secret, and every adventure.</p>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">Partners in Crime 👯‍♀️</div>
+                </div>
+
+                <!-- Frame 5 (Themed Greeting Card) -->
+                <div class="gallery-item themed-card" data-src="" data-caption="Laughter is warmer when shared with a sister. ✨">
+                    <div class="gallery-frame text-card purple-gradient">
+                        <div class="text-card-content">
+                            <h3>Laughter & Love</h3>
+                            <p>May your days always be filled with the giggles that make our bellies hurt.</p>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">Laughter & Love ✨</div>
+                </div>
+
+                <!-- Frame 6 (Themed Greeting Card) -->
+                <div class="gallery-item themed-card" data-src="" data-caption="Always and forever, your biggest fan and supporter. 💖">
+                    <div class="gallery-frame text-card champagne-gradient">
+                        <div class="text-card-content">
+                            <h3>Always & Forever</h3>
+                            <p>Supporting you, loving you, and celebrating you today and every day.</p>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">Always & Forever 💖</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Make a Wish Section -->
+    <section id="wish-section" class="wish-section scroll-section">
+        <div class="section-container">
+            <h2 class="section-title">Close your eyes, Muskan. Make a wish. 🕯️</h2>
+            <p class="section-subtitle">Click the glowing candle to blow it out and send your wish to the stars...</p>
+            
+            <div class="wish-cake-container">
+                <!-- 3D Interactive Cake Canvas for Blowout -->
+                <div id="wish-3d-container" class="canvas-3d-container"></div>
+                <div class="wish-instruction">Click the flame or press the button below</div>
+                <button id="blow-btn" class="cta-button blow-button">Blow the Candles 🌬️</button>
+            </div>
+
+            <div id="wish-success-msg" class="wish-success-overlay">
+                <div class="success-content">
+                    <div class="star-burst">🌠</div>
+                    <h2>Your wish is on its way!</h2>
+                    <p>May the universe bring you all the magic and success you deserve. 💖</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-particles" id="footer-canvas-container"></div>
+        <div class="footer-content">
+            <div class="heart-signature">Made with 💖 by your sibling</div>
+            <p class="signature-sub">Just for you, Muskan Singla</p>
+            
+            <!-- Social Share Button -->
+            <button id="share-btn" class="share-button">
+                <span>Share Muskan's Birthday Page 🔗</span>
+            </button>
+            
+            <div class="copyright-date">May 26, 2026 • 24 Years of Sparkle</div>
+        </div>
+    </footer>
+
+    <!-- Lightbox Popup Modal -->
+    <div id="lightbox" class="lightbox-modal">
+        <span class="lightbox-close">&times;</span>
+        <div class="lightbox-content-wrapper">
+            <img class="lightbox-content" id="lightbox-img" src="" alt="Enlarged gallery memory">
+            <div class="lightbox-text-card">
+                <p id="lightbox-caption"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts CDN Links -->
+    <!-- Three.js (3D Graphics) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- GSAP & ScrollTrigger (Smooth scrolling and transitions) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Canvas Confetti (Particle explosions) -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Typed.js (Typewriter effect) -->
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    
+    <!-- Main JS Application Logic -->
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,315 +1,1539 @@
 /**
  * Muskan Singla's 24th Birthday Website Logic
- * Handles Web Audio API Synthesizer, Three.js 3D WebGL scenes, GSAP animations,
- * Confetti bursts, Cursor sparkle trails, and interactive overlays.
+ * Features Three.js WebGL rendering, GSAP ScrollTriggers, Swiper.js, Web Audio API,
+ * Confetti bursts, Canvas Fireworks, and custom interactive components.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DESIGN THE WISHES ARRAY ---
+    // ==========================================
+    // 1. DATA DEFINITIONS
+    // ==========================================
+    
+    // 24 Wishes (exactly as requested + completing the grid beautifully)
     const wishes = [
-        "May every dream you dare to dream come true this year 🌟",
-        "May you always find reasons to smile, even on the hardest days 🌸",
-        "May your 24th year be your most adventurous yet ✈️",
-        "May love, success, and laughter follow you everywhere 💖",
-        "May you always know how deeply you are loved 🥰",
-        "May your confidence be unshakeable and your heart be fearless 💪",
-        "May this year bring you clarity, purpose, and joy beyond measure ✨",
-        "May every door you knock on open wide for you 🚪",
-        "May your kindness continue to touch lives and light up the world 🌎",
-        "May you find magic in the ordinary moments of life 🦋",
-        "May your path be lined with peace, warmth, and cozy moments ☕",
-        "May your laughter be loud, your worries be quiet, and your dreams be giant 🎈",
-        "May you grow stronger through every challenge and wiser with every step 🌱",
-        "May your creativity flow limitlessly and bring you endless pride 🎨",
-        "May you surround yourself with souls who lift you higher and love you truest 🤝",
-        "May you always celebrate the wonderful, unique person you are 👑",
-        "May your health be robust and your energy be boundlessly radiant ⚡",
-        "May you achieve every milestone you set your eyes on this year 🏆",
-        "May you find beauty in beginnings and peace in completions 🌅",
-        "May your heart be a sanctuary of gratitude, love, and light 🏛️",
-        "May you always have the courage to take up space and speak your truth 📣",
-        "May your days be filled with warm sun rays and your nights with sweet dreams 🌙",
-        "May this year bring you closer to your truest, happiest self 🌸",
-        "May Muskan's name always be synonymous with joy and success! 🎉"
+        "May every dream you dare to dream become your reality this year 🌟",
+        "May you find your biggest win in the place you least expected 🏆",
+        "May love find you in ways that take your breath away 💕",
+        "May your confidence shine louder than any doubt 💪",
+        "May this year be your most traveled, most adventured yet ✈️",
+        "May every morning feel like a new possibility waiting for you 🌅",
+        "May the people around you finally match your energy ✨",
+        "May your career take a leap that makes you proud 🚀",
+        "May you always choose yourself first, without guilt 🦋",
+        "May happiness become your permanent address this year 🏡",
+        "May your laughter always be the loudest in the room 😂",
+        "May every tear you cry be only from joy from now on 💧",
+        "May you always know exactly how loved you truly are 💖",
+        "May your heart feel full and your burdens feel light 🌸",
+        "May your friendships grow deeper and your circle grow stronger 👯",
+        "May every risk you take this year pay off beautifully 🎯",
+        "May you discover new parts of yourself that blow your mind 🌈",
+        "May good health and glowing energy be your constant companions 💫",
+        "May your family always be your anchor and your wings 🕊️",
+        "May peace find you even in the most chaotic moments 🌊",
+        "May you celebrate more wins than you ever thought possible 🥂",
+        "May your story inspire everyone who is lucky enough to know you 📖",
+        "May 24 be the year everything you have worked for finally clicks 🔑",
+        "May today remind you: you are extraordinary, Muskan. Always. 🎂✨"
     ];
 
-    // --- DESIGN THE QUOTES ARRAY ---
+    // 10 Quotes for Carousel (rotating muskan_buddha.jpg, muskan_flags.jpg, muskan_mountain.jpg)
     const quotes = [
-        { text: "She is clothed in strength and dignity, and she laughs without fear of the future.", author: "Proverbs 31:25" },
-        { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis" },
-        { text: "A sister is both your mirror and your opposite.", author: "Elizabeth Fishel" },
-        { text: "The most beautiful thing you can wear is confidence.", author: "Blake Lively" },
-        { text: "Do not wait for the perfect moment — take the moment and make it perfect.", author: "Unknown" },
-        { text: "At 24, the whole world is still yours to conquer. Go get it, queen.", author: "Unknown" },
-        { text: "A sister is a gift to the heart, a friend to the spirit, a golden thread to the meaning of life.", author: "Isadora James" },
-        { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
-        { text: "Always be a first-rate version of yourself, instead of a second-rate version of somebody else.", author: "Judy Garland" },
-        { text: "Here's to the nights that turned into memories, and the sister who turned into a best friend.", author: "Unknown" }
+        { text: "She is clothed in strength and dignity.", author: "Proverbs 31:25", image: "assets/muskan_buddha.jpg" },
+        { text: "You are never too old to set another goal or dream a new dream.", author: "C.S. Lewis", image: "assets/muskan_flags.jpg" },
+        { text: "A sister is both your mirror and your opposite.", author: "Elizabeth Fishel", image: "assets/muskan_mountain.jpg" },
+        { text: "The most beautiful thing you can wear is confidence.", author: "Blake Lively", image: "assets/muskan_buddha.jpg" },
+        { text: "Do not wait for the perfect moment — take it and make it perfect.", author: "Unknown", image: "assets/muskan_flags.jpg" },
+        { text: "She believed she could, so she did.", author: "R.S. Grey", image: "assets/muskan_mountain.jpg" },
+        { text: "At 24, the whole world is still yours to conquer. Go get it, queen. 👑", author: "Unknown", image: "assets/muskan_buddha.jpg" },
+        { text: "You are enough. You have always been enough. You will always be enough.", author: "Unknown", image: "assets/muskan_flags.jpg" },
+        { text: "Behind every strong woman is herself.", author: "Unknown", image: "assets/muskan_mountain.jpg" },
+        { text: "Life is not measured by the number of breaths we take, but by the moments that take our breath away.", author: "Unknown", image: "assets/muskan_buddha.jpg" }
     ];
 
-    // --- 1. PROCEDURAL MUSIC & SOUNDS (WEB AUDIO API + MP3 FALLBACK) ---
-    class AudioManager {
+    // ==========================================
+    // 2. PROCEDURAL SOUND ENGINE (WEB AUDIO API)
+    // ==========================================
+    class SoundEngine {
         constructor() {
             this.ctx = null;
-            this.audioEl = null;
-            this.isMuted = true;
+            this.masterGain = null;
             this.synthInterval = null;
-            this.melodyNoteIndex = 0;
-            this.isUsingSynth = false;
-
-            // Soft luxury ambient progression: Cmaj7 - Am7 - Fmaj7 - Gmaj7
-            this.chords = [
-                [60, 64, 67, 71], // Cmaj7
-                [57, 60, 64, 67], // Am7
-                [53, 57, 60, 64], // Fmaj7
-                [55, 59, 62, 66]  // Gmaj7
-            ];
             this.chordIndex = 0;
+            this.isMuted = true;
+
+            // Warm luxury chords (Ebm7 - Ab7 - Dbmaj7 - Gbmaj7)
+            this.chords = [
+                [51, 55, 58, 61, 65], // Ebm9
+                [56, 60, 63, 66, 70], // Ab9
+                [49, 53, 56, 60, 63], // Dbmaj9
+                [54, 58, 61, 65, 68]  // Gbmaj9
+            ];
         }
 
         init() {
-            // Setup HTML Audio element for MP3
-            this.audioEl = new Audio();
-            this.audioEl.src = 'assets/bgm.mp3';
-            this.audioEl.loop = true;
-            this.audioEl.volume = 0.5;
-
-            this.audioEl.addEventListener('error', () => {
-                console.warn("BGM MP3 load failed. Using procedural Web Audio synthesizer.");
-                this.isUsingSynth = true;
-            });
-        }
-
-        startAudio() {
             if (this.ctx) return;
-            
-            // Initialize Audio Context on click
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             this.ctx = new AudioContext();
-
-            this.isMuted = false;
-            document.getElementById('audio-toggle').classList.remove('muted');
-
-            if (this.isUsingSynth) {
-                this.startSynth();
-            } else {
-                this.audioEl.play().catch(err => {
-                    console.warn("Autoplay failed, falling back to Web Audio Synthesizer:", err);
-                    this.isUsingSynth = true;
-                    this.startSynth();
-                });
-            }
-        }
-
-        toggleMute() {
-            this.isMuted = !this.isMuted;
-            const btn = document.getElementById('audio-toggle');
             
-            if (this.isMuted) {
-                btn.classList.add('muted');
-                if (this.isUsingSynth) {
-                    this.stopSynth();
-                } else {
-                    this.audioEl.pause();
-                }
-            } else {
-                btn.classList.remove('muted');
-                // Resume Context if suspended
-                if (this.ctx && this.ctx.state === 'suspended') {
-                    this.ctx.resume();
-                }
-                
-                if (this.isUsingSynth) {
-                    this.startSynth();
-                } else {
-                    this.audioEl.play().catch(() => {
-                        this.isUsingSynth = true;
-                        this.startSynth();
-                    });
-                }
-            }
+            // Master gain node
+            this.masterGain = this.ctx.createGain();
+            this.masterGain.gain.setValueAtTime(0.3, this.ctx.currentTime); // Default volume 30%
+            this.masterGain.connect(this.ctx.destination);
         }
 
-        // Web Audio Synthesizer Code
-        startSynth() {
+        setVolume(percent) {
             if (!this.ctx) return;
-            if (this.ctx.state === 'suspended') this.ctx.resume();
+            const vol = percent / 100;
+            this.masterGain.gain.setValueAtTime(vol, this.ctx.currentTime);
+        }
 
-            this.stopSynth(); // Clear existing loops
-
-            // Main Synth Loop - plays chords and chimes procedurally
-            const playStep = () => {
+        startBGM() {
+            this.init();
+            if (this.ctx.state === 'suspended') {
+                this.ctx.resume();
+            }
+            this.isMuted = false;
+            
+            // Loop backing ambient sequence
+            const playChords = () => {
                 if (this.isMuted) return;
-
-                // Play soft chord
-                const chordNotes = this.chords[this.chordIndex];
-                chordNotes.forEach((midiNote, idx) => {
-                    this.playPianoNote(midiNote, 0.08, idx * 0.05, 3.5);
+                const notes = this.chords[this.chordIndex];
+                
+                // Play chord notes gently
+                notes.forEach((midi, i) => {
+                    this.triggerAmbientNote(midi, 0.05, i * 0.15, 4.5);
                 });
 
-                // Generate a random sweet melody note
-                const chord = this.chords[this.chordIndex];
-                const melodyNote = chord[Math.floor(Math.random() * chord.length)] + 12; // Octave up
-                this.playChimeNote(melodyNote, 0.04, 0.8, 2.0);
-                
-                // Advance chord structure
+                // Sweet arpeggiated chime notes above the chord
+                setTimeout(() => {
+                    if (this.isMuted) return;
+                    const melodyNotes = [notes[2] + 12, notes[3] + 12, notes[4] + 12];
+                    melodyNotes.forEach((midi, i) => {
+                        this.triggerChime(midi, 0.04, i * 0.5, 2.5);
+                    });
+                }, 1500);
+
                 this.chordIndex = (this.chordIndex + 1) % this.chords.length;
             };
 
-            playStep();
-            this.synthInterval = setInterval(playStep, 4000);
+            playChords();
+            this.synthInterval = setInterval(playChords, 5500);
         }
 
-        stopSynth() {
+        stopBGM() {
+            this.isMuted = true;
             if (this.synthInterval) {
                 clearInterval(this.synthInterval);
                 this.synthInterval = null;
             }
         }
 
-        midiToFreq(note) {
-            return 440 * Math.pow(2, (note - 69) / 12);
+        midiToFreq(midi) {
+            return 440 * Math.pow(2, (midi - 69) / 12);
         }
 
-        playPianoNote(midiNote, volume, delay, duration) {
-            const freq = this.midiToFreq(midiNote);
+        // Gentler sine synthesizer for background chords
+        triggerAmbientNote(midi, vol, delay, duration) {
             const time = this.ctx.currentTime + delay;
+            const freq = this.midiToFreq(midi);
 
-            // Oscillators
-            const osc1 = this.ctx.createOscillator();
-            const osc2 = this.ctx.createOscillator();
-            osc1.type = 'triangle';
-            osc2.type = 'sine';
-            osc1.frequency.setValueAtTime(freq, time);
-            osc2.frequency.setValueAtTime(freq * 1.002, time); // Subtle detune
+            const osc = this.ctx.createOscillator();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, time);
 
-            // Filter (Lowpass to make it warm and soft)
+            // High pass filter for warm tone
             const filter = this.ctx.createBiquadFilter();
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(600, time);
-            filter.frequency.exponentialRampToValueAtTime(100, time + duration);
+            filter.frequency.setValueAtTime(800, time);
 
-            // Envelope Gain
-            const gainNode = this.ctx.createGain();
-            gainNode.gain.setValueAtTime(0, time);
-            gainNode.gain.linearRampToValueAtTime(volume, time + 0.1);
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+            const gain = this.ctx.createGain();
+            gain.gain.setValueAtTime(0, time);
+            gain.gain.linearRampToValueAtTime(vol, time + 0.5);
+            gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
 
-            // Connections
-            osc1.connect(filter);
-            osc2.connect(filter);
-            filter.connect(gainNode);
-            gainNode.connect(this.ctx.destination);
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.masterGain);
 
-            osc1.start(time);
-            osc2.start(time);
-            osc1.stop(time + duration);
-            osc2.stop(time + duration);
+            osc.start(time);
+            osc.stop(time + duration);
         }
 
-        playChimeNote(midiNote, volume, delay, duration) {
-            const freq = this.midiToFreq(midiNote);
+        // Tapping chime synthesis for cards and hover effects
+        triggerChime(midi, vol, delay, duration) {
+            this.init();
+            if (this.ctx.state === 'suspended') this.ctx.resume();
+            
             const time = this.ctx.currentTime + delay;
+            const freq = this.midiToFreq(midi);
 
             const osc = this.ctx.createOscillator();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, time);
 
-            // High filter for bell chime sound
-            const filter = this.ctx.createBiquadFilter();
-            filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(freq * 1.5, time);
+            const bandpass = this.ctx.createBiquadFilter();
+            bandpass.type = 'bandpass';
+            bandpass.frequency.setValueAtTime(freq, time);
+            bandpass.Q.setValueAtTime(3.0, time);
 
-            const gainNode = this.ctx.createGain();
-            gainNode.gain.setValueAtTime(0, time);
-            gainNode.gain.linearRampToValueAtTime(volume, time + 0.05);
-            gainNode.gain.exponentialRampToValueAtTime(0.00001, time + duration);
+            const gain = this.ctx.createGain();
+            gain.gain.setValueAtTime(0, time);
+            gain.gain.linearRampToValueAtTime(vol, time + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.00001, time + duration);
 
-            osc.connect(filter);
-            filter.connect(gainNode);
-            gainNode.connect(this.ctx.destination);
+            osc.connect(bandpass);
+            bandpass.connect(gain);
+            gain.connect(this.masterGain);
 
             osc.start(time);
             osc.stop(time + duration);
         }
+
+        // Sweeping noise for candle blow whoosh + retro celebratory upward arpeggio for cheer
+        triggerBlowoutEffects() {
+            this.init();
+            if (this.ctx.state === 'suspended') this.ctx.resume();
+
+            const now = this.ctx.currentTime;
+
+            // 1. Whoosh: White Noise Sweep
+            const bufferSize = this.ctx.sampleRate * 0.6; // 0.6 seconds
+            const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const noiseNode = this.ctx.createBufferSource();
+            noiseNode.buffer = buffer;
+
+            const noiseFilter = this.ctx.createBiquadFilter();
+            noiseFilter.type = 'lowpass';
+            noiseFilter.frequency.setValueAtTime(1000, now);
+            noiseFilter.frequency.exponentialRampToValueAtTime(80, now + 0.5);
+
+            const noiseGain = this.ctx.createGain();
+            noiseGain.gain.setValueAtTime(0.4, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+
+            noiseNode.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(this.masterGain);
+            noiseNode.start(now);
+
+            // 2. Retro Cheer arpeggio: Rapid happy notes ascending
+            const cheerNotes = [60, 64, 67, 72, 76, 79, 84]; // C4, E4, G4, C5, E5, G5, C6
+            cheerNotes.forEach((midi, idx) => {
+                this.triggerChime(midi, 0.15, 0.3 + (idx * 0.08), 1.2);
+            });
+        }
     }
 
-    const musicPlayer = new AudioManager();
-    musicPlayer.init();
+    const sound = new SoundEngine();
 
-    // Attach to audio toggle button
-    document.getElementById('audio-toggle').addEventListener('click', () => {
-        musicPlayer.toggleMute();
+    // Attach control widget handlers
+    const audioBtn = document.getElementById('audio-toggle');
+    const volSlider = document.getElementById('volume-slider');
+
+    audioBtn.addEventListener('click', () => {
+        if (sound.isMuted) {
+            audioBtn.classList.remove('muted');
+            sound.startBGM();
+        } else {
+            audioBtn.classList.add('muted');
+            sound.stopBGM();
+        }
     });
 
+    volSlider.addEventListener('input', (e) => {
+        sound.setVolume(e.target.value);
+    });
 
-    // --- 2. GLOBAL BACKROUND STARS CANVAS ---
-    const bgCanvas = document.getElementById('bg-canvas');
-    const bgCtx = bgCanvas.getContext('2d');
+    // ==========================================
+    // 3. GLOBAL THREE.JS CANVAS (Background Stars, Balloons, Petals)
+    // ==========================================
+    let glScene, glCamera, glRenderer;
+    let glBalloons = [];
+    let glPetals = [];
+    let glStars;
+    let mouseX = 0, mouseY = 0;
 
-    let stars = [];
-    const starCount = 120;
+    function initGlobalBg3D() {
+        const canvas = document.getElementById('global-bg-canvas');
+        if (!canvas) return;
 
-    function resizeBgCanvas() {
-        bgCanvas.width = window.innerWidth;
-        bgCanvas.height = window.innerHeight;
+        glScene = new THREE.Scene();
+
+        glCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        glCamera.position.z = 15;
+
+        glRenderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        glRenderer.setSize(window.innerWidth, window.innerHeight);
+        glRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Ambient glow
+        const ambient = new THREE.AmbientLight(0xffffff, 0.45);
+        glScene.add(ambient);
+
+        const pointLight = new THREE.PointLight(0xffd5e5, 1.0, 50);
+        pointLight.position.set(5, 5, 10);
+        glScene.add(pointLight);
+
+        // A. 3D Particle Star Field
+        const starGeom = new THREE.BufferGeometry();
+        const starCount = 300;
+        const starCoords = [];
+
+        for (let i = 0; i < starCount; i++) {
+            starCoords.push(
+                (Math.random() - 0.5) * 50,
+                (Math.random() - 0.5) * 50,
+                (Math.random() - 0.5) * 30
+            );
+        }
+        starGeom.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
+        
+        const starMat = new THREE.PointsMaterial({
+            color: 0xF7E7CE, // Champagne Gold
+            size: 0.12,
+            transparent: true,
+            opacity: 0.75
+        });
+        
+        glStars = new THREE.Points(starGeom, starMat);
+        glScene.add(glStars);
+
+        // B. 3D Balloons (Stretching spheres)
+        const balloonColors = [0xB76E79, 0xC3B1E1, 0xF7E7CE]; // Rose gold, Lavender, Champagne Gold
+        const balloonCount = 18;
+
+        for (let i = 0; i < balloonCount; i++) {
+            const color = balloonColors[i % balloonColors.length];
+            const mat = new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: 0.15,
+                metalness: 0.45,
+                roughnessMap: null
+            });
+
+            const balloonGeo = new THREE.SphereGeometry(0.55, 16, 16);
+            balloonGeo.scale(1, 1.28, 1);
+            
+            const mesh = new THREE.Mesh(balloonGeo, mat);
+
+            // Small knot at base of balloon
+            const knotGeo = new THREE.ConeGeometry(0.08, 0.14, 8);
+            const knot = new THREE.Mesh(knotGeo, mat);
+            knot.position.y = -0.7;
+            mesh.add(knot);
+
+            // Curved ribbon string
+            const points = [];
+            points.push(new THREE.Vector3(0, -0.7, 0));
+            points.push(new THREE.Vector3(-0.05, -1.5, 0));
+            points.push(new THREE.Vector3(0.05, -2.5, 0));
+            
+            const stringGeo = new THREE.BufferGeometry().setFromPoints(points);
+            const stringMat = new THREE.LineBasicMaterial({ color: 0xcccccc, transparent: true, opacity: 0.35 });
+            const string = new THREE.Line(stringGeo, stringMat);
+            mesh.add(string);
+
+            // Random positions spread in space
+            mesh.position.set(
+                (Math.random() - 0.5) * 35,
+                (Math.random() - 1.2) * 20,
+                (Math.random() - 0.5) * 15 - 5
+            );
+
+            glScene.add(mesh);
+            glBalloons.push({
+                mesh: mesh,
+                speed: Math.random() * 0.02 + 0.015,
+                sway: Math.random() * 12,
+                amplitude: Math.random() * 0.015 + 0.005
+            });
+        }
+
+        // C. 3D Floating Rose Petals
+        const petalMat = new THREE.MeshStandardMaterial({
+            color: 0xB76E79, // Rose gold petals
+            roughness: 0.35,
+            metalness: 0.1,
+            side: THREE.DoubleSide
+        });
+
+        // Curved petal plane
+        const petalGeo = new THREE.PlaneGeometry(0.38, 0.38, 3, 3);
+        const posAttr = petalGeo.attributes.position;
+        // Curve vertices slightly to look like a petal
+        for (let i = 0; i < posAttr.count; i++) {
+            const x = posAttr.getX(i);
+            const y = posAttr.getY(i);
+            posAttr.setZ(i, (x * x + y * y) * 0.15); // curved depth
+        }
+        petalGeo.computeVertexNormals();
+
+        const petalCount = 25;
+        for (let i = 0; i < petalCount; i++) {
+            const mesh = new THREE.Mesh(petalGeo, petalMat);
+            
+            mesh.position.set(
+                (Math.random() - 0.5) * 35,
+                (Math.random() * 15) + 10,
+                (Math.random() - 0.5) * 10
+            );
+
+            mesh.rotation.set(
+                Math.random() * Math.PI,
+                Math.random() * Math.PI,
+                Math.random() * Math.PI
+            );
+
+            glScene.add(mesh);
+            glPetals.push({
+                mesh: mesh,
+                speedY: Math.random() * 0.015 + 0.012,
+                rotSpeedX: Math.random() * 0.01 + 0.005,
+                rotSpeedY: Math.random() * 0.015 + 0.005,
+                sway: Math.random() * 8
+            });
+        }
+
+        // Render loop
+        const clock = new THREE.Clock();
+        
+        function renderGlobal() {
+            const t = clock.getElapsedTime();
+
+            // React stars to mouse
+            if (glStars) {
+                glStars.rotation.x = t * 0.015 + (mouseY * 0.1);
+                glStars.rotation.y = t * 0.01 + (mouseX * 0.1);
+            }
+
+            // Animate Balloons rising
+            glBalloons.forEach(b => {
+                b.mesh.position.y += b.speed;
+                b.mesh.position.x += Math.sin(t * 1.2 + b.sway) * b.amplitude;
+                b.mesh.rotation.z = Math.sin(t * 0.5 + b.sway) * 0.08;
+
+                // Reset at top
+                if (b.mesh.position.y > 22.0) {
+                    b.mesh.position.y = -22.0;
+                    b.mesh.position.x = (Math.random() - 0.5) * 35;
+                }
+            });
+
+            // Animate Petals falling
+            glPetals.forEach(p => {
+                p.mesh.position.y -= p.speedY;
+                p.mesh.position.x += Math.sin(t * 0.8 + p.sway) * 0.008;
+                
+                p.mesh.rotation.x += p.rotSpeedX;
+                p.mesh.rotation.y += p.rotSpeedY;
+
+                // Reset at bottom
+                if (p.mesh.position.y < -20.0) {
+                    p.mesh.position.y = 20.0;
+                    p.mesh.position.x = (Math.random() - 0.5) * 35;
+                }
+            });
+
+            glRenderer.render(glScene, glCamera);
+            requestAnimationFrame(renderGlobal);
+        }
+
+        renderGlobal();
+
+        // Listen for mousemove to update offsets
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            if (!glCamera || !glRenderer) return;
+            glCamera.aspect = window.innerWidth / window.innerHeight;
+            glCamera.updateProjectionMatrix();
+            glRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
     }
-    resizeBgCanvas();
-    window.addEventListener('resize', resizeBgCanvas);
 
-    class Star {
+    // ==========================================
+    // 4. HERO CANVAS (3D cake + spin metallic "24")
+    // ==========================================
+    let heroScene, heroCamera, heroRenderer;
+    let heroCake, heroNumber24;
+
+    function initHeroScene() {
+        const container = document.getElementById('hero-3d-container');
+        if (!container) return;
+
+        heroScene = new THREE.Scene();
+
+        heroCamera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
+        // Adjust camera positions based on responsive screen
+        if (window.innerWidth < 768) {
+            heroCamera.position.set(0, 1.8, 8.5);
+        } else {
+            // Cake sits on the right side of hero section
+            heroCamera.position.set(1.5, 1.5, 6.8);
+        }
+
+        heroRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        heroRenderer.setSize(container.clientWidth, container.clientHeight);
+        heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        heroRenderer.shadowMap.enabled = true;
+        container.appendChild(heroRenderer.domElement);
+
+        // Lighting
+        const ambient = new THREE.AmbientLight(0xffe6e6, 0.6);
+        heroScene.add(ambient);
+
+        const pointLight = new THREE.PointLight(0xffa3c4, 1.5, 20);
+        pointLight.position.set(2, 3, 4);
+        heroScene.add(pointLight);
+
+        // Build 3D cake
+        heroCake = new THREE.Group();
+        buildCakeModel(heroCake);
+        heroCake.position.set(1.8, -1.1, 0); // Position on the right side
+        if (window.innerWidth < 768) {
+            heroCake.position.set(0, -1.3, 0);
+        }
+        heroScene.add(heroCake);
+
+        // Build spin metallic 24
+        heroNumber24 = new THREE.Group();
+        buildNumber24Model(heroNumber24);
+        heroNumber24.position.set(1.8, 1.4, -2.5); // behind cake
+        if (window.innerWidth < 768) {
+            heroNumber24.position.set(0, 1.1, -2.5);
+        }
+        heroScene.add(heroNumber24);
+
+        // Render loop
+        const clock = new THREE.Clock();
+        
+        function renderHero() {
+            const elapsed = clock.getElapsedTime();
+
+            // Slowly rotate cake
+            if (heroCake) {
+                heroCake.rotation.y = elapsed * 0.15;
+            }
+
+            // Slowly rotate golden 24
+            if (heroNumber24) {
+                heroNumber24.rotation.y = elapsed * 0.25;
+                heroNumber24.position.y = (window.innerWidth < 768 ? 1.1 : 1.4) + Math.sin(elapsed * 1.5) * 0.1;
+            }
+
+            // Animate flames
+            const flames = heroScene.getObjectByName('hero-flames');
+            if (flames) {
+                flames.children.forEach((flame, idx) => {
+                    const wave = Math.sin(elapsed * 12 + idx * 8) * 0.15;
+                    flame.scale.set(1 + wave, 1.2 + wave * 1.8, 1 + wave);
+                });
+            }
+
+            heroRenderer.render(heroScene, heroCamera);
+            requestAnimationFrame(renderHero);
+        }
+
+        renderHero();
+
+        // Responsive Resize
+        window.addEventListener('resize', () => {
+            if (!heroCamera || !heroRenderer || !container) return;
+            heroCamera.aspect = container.clientWidth / container.clientHeight;
+            if (window.innerWidth < 768) {
+                heroCamera.position.set(0, 1.8, 8.5);
+                heroCake.position.set(0, -1.3, 0);
+                heroNumber24.position.set(0, 1.1, -2.5);
+            } else {
+                heroCamera.position.set(1.5, 1.5, 6.8);
+                heroCake.position.set(1.8, -1.1, 0);
+                heroNumber24.position.set(1.8, 1.4, -2.5);
+            }
+            heroCamera.updateProjectionMatrix();
+            heroRenderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    }
+
+    function buildCakeModel(group) {
+        // Materials
+        const cakeMat = new THREE.MeshStandardMaterial({ color: 0xF7E7CE, roughness: 0.2, metalness: 0.15 }); // Champagne
+        const frostingMat = new THREE.MeshStandardMaterial({ color: 0xB76E79, roughness: 0.2, metalness: 0.35 }); // Rose gold
+        const goldMat = new THREE.MeshStandardMaterial({ color: 0xD4AF37, roughness: 0.1, metalness: 0.9 });
+        const flameMat = new THREE.MeshBasicMaterial({ color: 0xffa31a });
+
+        // Stand
+        const stand = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 0.08, 32), goldMat);
+        stand.position.y = 0.04;
+        group.add(stand);
+
+        // Lower tier
+        const tier1 = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.4, 0.7, 32), frostingMat);
+        tier1.position.y = 0.43;
+        group.add(tier1);
+
+        // Upper tier
+        const tier2 = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.6, 32), cakeMat);
+        tier2.position.y = 1.08;
+        group.add(tier2);
+
+        // Creams
+        for (let i = 0; i < 12; i++) {
+            const angle = (i / 12) * Math.PI * 2;
+            const cream = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), frostingMat);
+            cream.position.set(Math.cos(angle) * 0.92, 1.38, Math.sin(angle) * 0.92);
+            group.add(cream);
+        }
+
+        // Candles (3 small candles)
+        const candleMat = new THREE.MeshStandardMaterial({ color: 0xC3B1E1 });
+        const candleGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.35, 12);
+        const candlePos = [
+            { x: -0.3, y: 1.55, z: 0.1 },
+            { x: 0.2, y: 1.55, z: -0.3 },
+            { x: 0.1, y: 1.55, z: 0.3 }
+        ];
+
+        const flamesGroup = new THREE.Group();
+        flamesGroup.name = 'hero-flames';
+
+        candlePos.forEach(pos => {
+            const candle = new THREE.Mesh(candleGeo, candleMat);
+            candle.position.set(pos.x, pos.y, pos.z);
+            group.add(candle);
+
+            // flame
+            const cone = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.16, 8), flameMat);
+            cone.position.set(pos.x, pos.y + 0.24, pos.z);
+            flamesGroup.add(cone);
+        });
+
+        group.add(flamesGroup);
+    }
+
+    function buildNumber24Model(group) {
+        const goldMat = new THREE.MeshStandardMaterial({
+            color: 0xD4AF37, // Golden Metallic
+            roughness: 0.12,
+            metalness: 0.95,
+            emissive: 0xD4AF37,
+            emissiveIntensity: 0.18
+        });
+
+        const sphereGeo = new THREE.SphereGeometry(0.12, 16, 16);
+
+        // Coordinate nodes to map "24"
+        const coords2 = [
+            { x: -1.0, y: 0.8 }, { x: -0.7, y: 1.1 }, { x: -0.3, y: 1.25 }, { x: 0.1, y: 1.25 },
+            { x: 0.5, y: 1.1 }, { x: 0.7, y: 0.8 }, { x: 0.6, y: 0.4 }, { x: 0.3, y: 0.1 },
+            { x: 0, y: -0.2 }, { x: -0.3, y: -0.5 }, { x: -0.6, y: -0.8 }, { x: -0.8, y: -1.1 },
+            { x: -0.9, y: -1.3 }, { x: -0.5, y: -1.3 }, { x: -0.1, y: -1.3 }, { x: 0.3, y: -1.3 },
+            { x: 0.7, y: -1.3 }
+        ];
+
+        const coords4 = [
+            { x: 1.8, y: 1.1 }, { x: 1.5, y: 0.7 }, { x: 1.2, y: 0.3 }, { x: 0.9, y: -0.1 },
+            { x: 0.9, y: -0.5 }, { x: 1.3, y: -0.5 }, { x: 1.7, y: -0.5 }, { x: 2.1, y: -0.5 },
+            { x: 2.5, y: -0.5 }, { x: 1.8, y: 1.4 }, { x: 1.8, y: 0.5 }, { x: 1.8, y: 0 },
+            { x: 1.8, y: -0.5 }, { x: 1.8, y: -1.0 }, { x: 1.8, y: -1.3 }
+        ];
+
+        // Combine spheres mapping
+        coords2.forEach(pt => {
+            const sp = new THREE.Mesh(sphereGeo, goldMat);
+            sp.position.set(pt.x - 0.5, pt.y, 0);
+            group.add(sp);
+        });
+
+        coords4.forEach(pt => {
+            const sp = new THREE.Mesh(sphereGeo, goldMat);
+            sp.position.set(pt.x - 0.5, pt.y, 0);
+            group.add(sp);
+        });
+
+        // Set average scale
+        group.scale.set(0.85, 0.85, 0.85);
+    }
+
+    // ==========================================
+    // 5. ENVELOPE NOTE INTERACTION
+    // ==========================================
+    const envelope = document.getElementById('letter-envelope');
+    const envelopeWrapper = document.querySelector('.envelope-wrapper');
+    const closeBtn = document.getElementById('close-letter');
+
+    envelope.addEventListener('click', (e) => {
+        // Prevent click events from firing twice or breaking on close
+        if (envelopeWrapper.classList.contains('expanded')) return;
+        
+        if (!envelopeWrapper.classList.contains('open')) {
+            envelopeWrapper.classList.add('open');
+            sound.triggerChime(76, 0.15, 0, 1.2);
+            
+            // Expand card overlay after sliding open
+            setTimeout(() => {
+                envelopeWrapper.classList.add('expanded');
+                sound.triggerChime(79, 0.12, 0.1, 1.5);
+            }, 900);
+        }
+    });
+
+    closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Stop click from immediately re-expanding envelope
+        envelopeWrapper.classList.remove('expanded');
+        
+        setTimeout(() => {
+            envelopeWrapper.classList.remove('open');
+        }, 600);
+    });
+
+    // ==========================================
+    // 6. POPULATE 24 WISHES GRID
+    // ==========================================
+    const wishesGrid = document.getElementById('wishes-container');
+    if (wishesGrid) {
+        wishes.forEach((wishText, idx) => {
+            const num = idx + 1;
+            const card = document.createElement('div');
+            card.className = 'wish-card-flip';
+            card.setAttribute('tabindex', '0');
+            card.innerHTML = `
+                <div class="wish-card-front">
+                    <span class="wish-number">${String(num).padStart(2, '0')}</span>
+                    <span class="wish-sparkle">✦</span>
+                    <h4>Wish #${num}</h4>
+                </div>
+                <div class="wish-card-back">
+                    <p>${wishText}</p>
+                </div>
+            `;
+            wishesGrid.appendChild(card);
+
+            // Add soft synthesised chime sound on hover/focus flip
+            card.addEventListener('mouseenter', () => {
+                sound.triggerChime(64 + (num % 12), 0.08, 0, 1.0);
+            });
+            card.addEventListener('focus', () => {
+                sound.triggerChime(64 + (num % 12), 0.08, 0, 1.0);
+            });
+            // Click support on mobile
+            card.addEventListener('click', () => {
+                card.classList.toggle('flipped');
+            });
+        });
+    }
+
+    // ==========================================
+    // 7. SWIPER QUOTES CAROUSEL
+    // ==========================================
+    const swiperWrapper = document.getElementById('quotes-swiper-wrapper');
+    if (swiperWrapper) {
+        quotes.forEach(q => {
+            const slide = document.createElement('div');
+            slide.className = 'swiper-slide';
+            slide.innerHTML = `
+                <div class="quote-card">
+                    <div class="quote-card-bg" style="background-image: url('${q.image}');"></div>
+                    <div class="quote-card-content">
+                        <div class="quote-mark">“</div>
+                        <p class="quote-text">${q.text}</p>
+                        <div class="quote-underline"></div>
+                        <p class="quote-author">${q.author}</p>
+                    </div>
+                </div>
+            `;
+            swiperWrapper.appendChild(slide);
+        });
+
+        // Initialize Swiper.js
+        const swiper = new Swiper('.quotes-swiper', {
+            slidesPerView: 1,
+            centeredSlides: true,
+            loop: true,
+            autoplay: {
+                delay: 8000, // 8-second auto-advance
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            },
+            on: {
+                slideChange: () => {
+                    // Play subtle chime note on slide shifts
+                    sound.triggerChime(67, 0.05, 0, 1.0);
+                }
+            }
+        });
+    }
+
+    // ==========================================
+    // 8. GSAP SCROLLTIMELINE DESKTOP PINNING
+    // ==========================================
+    gsap.registerPlugin(ScrollTrigger);
+
+    function setupTimelineAnimations() {
+        const wrapper = document.getElementById('timeline-scroll-wrapper');
+        const container = document.getElementById('timeline-container');
+        const activeBar = document.getElementById('timeline-progress-active');
+        
+        if (!container || !wrapper) return;
+
+        // Calculate translation width
+        const getScrollAmount = () => {
+            return -(container.scrollWidth - window.innerWidth + 200); // 200px offset margins
+        };
+
+        let tlTrigger = null;
+
+        // Desktop Pinning ScrollTrigger
+        const initScrollPin = () => {
+            if (window.innerWidth > 768) {
+                // Set timeline row display
+                container.style.transform = 'none';
+
+                tlTrigger = gsap.to(container, {
+                    x: getScrollAmount,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: '#timeline-section',
+                        start: "top top",
+                        end: () => `+=${container.scrollWidth - window.innerWidth}`,
+                        pin: true,
+                        scrub: 1,
+                        invalidateOnRefresh: true,
+                        onUpdate: (self) => {
+                            // Link active progress line to scrub timeline scroll progress
+                            if (activeBar) {
+                                activeBar.style.width = `${self.progress * 100}%`;
+                            }
+                        }
+                    }
+                });
+            } else {
+                // Clear any leftover inline transforms
+                container.style.transform = 'none';
+                if (activeBar) activeBar.style.width = '4px'; // static vertical height indicator
+            }
+        };
+
+        initScrollPin();
+
+        // Responsive re-init
+        window.addEventListener('resize', () => {
+            if (tlTrigger) {
+                tlTrigger.scrollTrigger.kill();
+                tlTrigger.kill();
+                tlTrigger = null;
+            }
+            initScrollPin();
+        });
+
+        // Stagger fade-in of elements on vertical scrolling on mobile
+        gsap.utils.toArray('.timeline-item').forEach(item => {
+            gsap.from(item.querySelector('.timeline-card'), {
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 80%",
+                    toggleActions: "play none none none"
+                },
+                opacity: 0,
+                y: 35,
+                duration: 0.9,
+                ease: "power2.out"
+            });
+        });
+    }
+
+    setupTimelineAnimations();
+
+    // ==========================================
+    // 9. THREE.JS WISH SCENE (Interactive Candle Blowout)
+    // ==========================================
+    let wishScene, wishCamera, wishRenderer;
+    let wishCandleModel, wishFlameModel, wishSmokeParticles = [];
+    let isCandleLit = true;
+
+    function initWishScene() {
+        const container = document.getElementById('wish-3d-container');
+        if (!container) return;
+
+        wishScene = new THREE.Scene();
+
+        wishCamera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
+        wishCamera.position.set(0, 1.6, 5.0);
+
+        wishRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        wishRenderer.setSize(container.clientWidth, container.clientHeight);
+        wishRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(wishRenderer.domElement);
+
+        // Lighting
+        const ambient = new THREE.AmbientLight(0xffebf0, 0.7);
+        wishScene.add(ambient);
+
+        const dLight = new THREE.DirectionalLight(0xfdfbf7, 1.0);
+        dLight.position.set(1, 4, 2);
+        wishScene.add(dLight);
+
+        // Burning flame candle pointlight
+        const flameLight = new THREE.PointLight(0xff7c24, 2.5, 12);
+        flameLight.position.set(0, 0.6, 0);
+        wishScene.add(flameLight);
+
+        // Base Plate
+        const plateMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.15, metalness: 0.5 });
+        const plate = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 0.05, 32), plateMat);
+        plate.position.y = -0.7;
+        wishScene.add(plate);
+
+        // Golden candle
+        const goldMat = new THREE.MeshStandardMaterial({ color: 0xD4AF37, roughness: 0.12, metalness: 0.85 });
+        wishCandleModel = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.9, 16), goldMat);
+        wishCandleModel.position.y = -0.225;
+        wishCandleModel.name = "wish-candle";
+        wishScene.add(wishCandleModel);
+
+        // Wick
+        const wick = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.15, 8), new THREE.MeshBasicMaterial({ color: 0x1a1a1a }));
+        wick.position.set(0, 0.275, 0);
+        wishScene.add(wick);
+
+        // Flame Mesh
+        const flameMat = new THREE.MeshBasicMaterial({ color: 0xffaa11, transparent: true, opacity: 0.95 });
+        const flameGeo = new THREE.ConeGeometry(0.12, 0.38, 8);
+        flameGeo.translate(0, 0.19, 0); // shift origin to bottom for scaling
+        wishFlameModel = new THREE.Mesh(flameGeo, flameMat);
+        wishFlameModel.position.set(0, 0.32, 0);
+        wishFlameModel.name = "wish-flame";
+        wishScene.add(wishFlameModel);
+
+        // Smoke particles container setup
+        const smokeCount = 15;
+        const smokeGeo = new THREE.SphereGeometry(0.04, 8, 8);
+        const smokeMat = new THREE.MeshBasicMaterial({ color: 0xcccccc, transparent: true, opacity: 0.4 });
+        
+        for (let i = 0; i < smokeCount; i++) {
+            const smoke = new THREE.Mesh(smokeGeo, smokeMat);
+            smoke.visible = false;
+            wishScene.add(smoke);
+            wishSmokeParticles.push({
+                mesh: smoke,
+                speedY: Math.random() * 0.015 + 0.01,
+                speedX: (Math.random() - 0.5) * 0.005,
+                growth: Math.random() * 0.008 + 0.005
+            });
+        }
+
+        // Raycasting click to blow out candle
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        function handleCandleTouch(e) {
+            if (!isCandleLit) return;
+            const rect = wishRenderer.domElement.getBoundingClientRect();
+            
+            // Handle both touch & mouse Client positions
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, wishCamera);
+            const intersects = raycaster.intersectObjects(wishScene.children, true);
+
+            let hitCandle = false;
+            intersects.forEach(h => {
+                if (h.object.name === "wish-candle" || h.object.name === "wish-flame") {
+                    hitCandle = true;
+                }
+            });
+
+            if (hitCandle) {
+                blowOutCandleAction();
+            }
+        }
+
+        wishRenderer.domElement.addEventListener('mousedown', handleCandleTouch);
+        wishRenderer.domElement.addEventListener('touchstart', handleCandleTouch);
+
+        // Render Loop
+        const clock = new THREE.Clock();
+
+        function renderWish() {
+            const elapsed = clock.getElapsedTime();
+
+            // Animate flame flicker
+            if (isCandleLit && wishFlameModel) {
+                const s = Math.sin(elapsed * 15) * 0.12;
+                wishFlameModel.scale.set(1 + s, 1.2 + s * 1.5, 1 + s);
+                wishFlameModel.rotation.z = Math.sin(elapsed * 10) * 0.06;
+                flameLight.intensity = 2.5 + Math.sin(elapsed * 20) * 0.4;
+            } else if (!isCandleLit) {
+                flameLight.intensity = Math.max(0, flameLight.intensity - 0.15);
+            }
+
+            // Animate rising smoke if blown out
+            wishSmokeParticles.forEach(p => {
+                if (p.mesh.visible) {
+                    p.mesh.position.y += p.speedY;
+                    p.mesh.position.x += p.speedX;
+                    p.mesh.scale.x += p.growth;
+                    p.mesh.scale.y += p.growth;
+                    p.mesh.scale.z += p.growth;
+                    p.mesh.material.opacity = Math.max(0, p.mesh.material.opacity - 0.01);
+                    
+                    if (p.mesh.material.opacity <= 0) {
+                        p.mesh.visible = false;
+                    }
+                }
+            });
+
+            wishRenderer.render(wishScene, wishCamera);
+            requestAnimationFrame(renderWish);
+        }
+
+        renderWish();
+
+        // Resize
+        window.addEventListener('resize', () => {
+            if (!wishCamera || !wishRenderer || !container) return;
+            wishCamera.aspect = container.clientWidth / container.clientHeight;
+            wishCamera.updateProjectionMatrix();
+            wishRenderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    }
+
+    // Trigger blowout sequence
+    function blowOutCandleAction() {
+        if (!isCandleLit) return;
+        isCandleLit = false;
+
+        // 1. Shrink and hide flame
+        gsap.to(wishFlameModel.scale, {
+            x: 0, y: 0, z: 0,
+            duration: 0.3,
+            ease: "power2.inOut",
+            onComplete: () => {
+                wishFlameModel.visible = false;
+            }
+        });
+
+        // 2. Spawn rising smoke particles
+        wishSmokeParticles.forEach((p, i) => {
+            setTimeout(() => {
+                p.mesh.position.set(0, 0.35, 0);
+                p.mesh.scale.set(1, 1, 1);
+                p.mesh.material.opacity = 0.4;
+                p.mesh.visible = true;
+            }, i * 110);
+        });
+
+        // 3. Play blowout procedural sound whoosh + cheer
+        sound.triggerBlowoutEffects();
+
+        // 4. Multi-directional massive Confetti Cannon burst
+        const canvasRect = document.getElementById('wish-3d-container').getBoundingClientRect();
+        const originY = (canvasRect.top + canvasRect.height / 2) / window.innerHeight;
+        
+        confetti({
+            particleCount: 160,
+            spread: 95,
+            origin: { x: 0.5, y: originY }
+        });
+
+        setTimeout(() => {
+            confetti({
+                particleCount: 90,
+                angle: 60,
+                spread: 60,
+                origin: { x: 0, y: 0.8 }
+            });
+            confetti({
+                particleCount: 90,
+                angle: 120,
+                spread: 60,
+                origin: { x: 1, y: 0.8 }
+            });
+        }, 350);
+
+        // 5. Trigger Canvas Fireworks backdrop loop
+        startFireworksBackdrop();
+
+        // 6. Reveal success overlay card
+        setTimeout(() => {
+            const overlay = document.getElementById('wish-success-msg');
+            if (overlay) {
+                overlay.classList.add('active');
+            }
+        }, 1200);
+    }
+
+    // Attach to Blow candles button
+    const blowBtn = document.getElementById('blow-btn');
+    if (blowBtn) {
+        blowBtn.addEventListener('click', blowOutCandleAction);
+    }
+
+    // ==========================================
+    // 10. FIREWORKS CANVAS SIMULATION (Blowout overlay)
+    // ==========================================
+    const fireCanvas = document.getElementById('fireworks-canvas');
+    const fireCtx = fireCanvas.getContext('2d');
+    let fireworksArray = [];
+    let fireParticles = [];
+    let fireworksLoopId = null;
+
+    function resizeFireworksCanvas() {
+        fireCanvas.width = window.innerWidth;
+        fireCanvas.height = window.innerHeight;
+    }
+
+    class Firework {
         constructor() {
-            this.x = Math.random() * bgCanvas.width;
-            this.y = Math.random() * bgCanvas.height;
-            this.size = Math.random() * 2 + 0.5;
-            this.alpha = Math.random();
-            this.speed = Math.random() * 0.15 + 0.05;
-            this.color = Math.random() > 0.5 ? '#B76E79' : '#D4AF37'; // Rose Gold or Champagne Gold
+            this.x = Math.random() * fireCanvas.width;
+            this.y = fireCanvas.height;
+            this.targetY = Math.random() * (fireCanvas.height * 0.6) + fireCanvas.height * 0.1;
+            this.speed = Math.random() * 5 + 7;
+            this.color = `hsl(${Math.random() * 360}, 100%, 65%)`;
+            this.reached = false;
         }
 
         update() {
             this.y -= this.speed;
-            if (this.y < 0) {
-                this.y = bgCanvas.height;
-                this.x = Math.random() * bgCanvas.width;
+            if (this.y <= this.targetY) {
+                this.reached = true;
+                explodeFirework(this.x, this.y, this.color);
             }
-            this.alpha = Math.sin(Date.now() * 0.001 * this.speed + this.size) * 0.4 + 0.6;
         }
 
         draw() {
-            bgCtx.save();
-            bgCtx.globalAlpha = this.alpha;
-            bgCtx.fillStyle = this.color;
-            bgCtx.shadowBlur = 10;
-            bgCtx.shadowColor = this.color;
-            bgCtx.beginPath();
-            bgCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            bgCtx.fill();
-            bgCtx.restore();
+            fireCtx.save();
+            fireCtx.fillStyle = this.color;
+            fireCtx.beginPath();
+            fireCtx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+            fireCtx.fill();
+            fireCtx.restore();
         }
     }
 
-    // Populate Background Stars
-    for (let i = 0; i < starCount; i++) {
-        stars.push(new Star());
+    class FireParticle {
+        constructor(x, y, color) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 5 + 2;
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            this.alpha = 1;
+            this.decay = Math.random() * 0.015 + 0.012;
+            this.gravity = 0.06;
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.vy += this.gravity;
+            this.alpha -= this.decay;
+        }
+
+        draw() {
+            fireCtx.save();
+            fireCtx.globalAlpha = this.alpha;
+            fireCtx.fillStyle = this.color;
+            fireCtx.shadowBlur = 8;
+            fireCtx.shadowColor = this.color;
+            fireCtx.beginPath();
+            fireCtx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
+            fireCtx.fill();
+            fireCtx.restore();
+        }
     }
 
-    function animateBackground() {
-        bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-        stars.forEach(star => {
-            star.update();
-            star.draw();
+    function explodeFirework(x, y, color) {
+        for (let i = 0; i < 60; i++) {
+            fireParticles.push(new FireParticle(x, y, color));
+        }
+        // Play sweet blowout chimes procedurally with random pitches
+        sound.triggerChime(68 + Math.floor(Math.random() * 12), 0.06, 0, 1.2);
+    }
+
+    function startFireworksBackdrop() {
+        fireCanvas.style.display = 'block';
+        resizeFireworksCanvas();
+        window.addEventListener('resize', resizeFireworksCanvas);
+
+        function loop() {
+            fireCtx.fillStyle = 'rgba(5, 4, 10, 0.25)'; // slight trail tail
+            fireCtx.fillRect(0, 0, fireCanvas.width, fireCanvas.height);
+
+            // Spawn fireworks
+            if (Math.random() < 0.04 && fireworksArray.length < 5) {
+                fireworksArray.push(new Firework());
+            }
+
+            fireworksArray = fireworksArray.filter(f => !f.reached);
+            fireworksArray.forEach(f => {
+                f.update();
+                f.draw();
+            });
+
+            fireParticles = fireParticles.filter(p => p.alpha > 0);
+            fireParticles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            fireworksLoopId = requestAnimationFrame(loop);
+        }
+
+        loop();
+
+        // End loop after 10 seconds to conserve GPU
+        setTimeout(() => {
+            if (fireworksLoopId) {
+                cancelAnimationFrame(fireworksLoopId);
+                fireworksLoopId = null;
+                fireCtx.clearRect(0, 0, fireCanvas.width, fireCanvas.height);
+                fireCanvas.style.display = 'none';
+            }
+        }, 10000);
+    }
+
+    // ==========================================
+    // 11. PRELOADER & SIMULATED LOADING COUNT
+    // ==========================================
+    const progressEl = document.getElementById('progress-bar');
+    const percentEl = document.getElementById('loader-percent');
+    let loadedPercent = 0;
+
+    const loaderInterval = setInterval(() => {
+        // Increment loading percentage
+        loadedPercent += Math.floor(Math.random() * 9) + 4;
+        if (loadedPercent >= 100) {
+            loadedPercent = 100;
+            clearInterval(loaderInterval);
+
+            // Fade preloader away
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+
+                // Initial page load Double Side Confetti Cannon burst!
+                confetti({
+                    particleCount: 70,
+                    angle: 60,
+                    spread: 60,
+                    origin: { x: 0, y: 0.8 }
+                });
+                confetti({
+                    particleCount: 70,
+                    angle: 120,
+                    spread: 60,
+                    origin: { x: 1, y: 0.8 }
+                });
+
+                // Initialize heavy Three.js environments after loader closes
+                initGlobalBg3D();
+                initHeroScene();
+                initWishScene();
+                setupScrollReveals();
+
+                // Setup Typewriter subtitles in Hero
+                new Typed('#typed-welcome', {
+                    strings: [
+                        "May 26, 2026 — A day the world got a little more magical ✨",
+                        "Celebrate Muskan's 24 years of absolute sparkle! 🌸",
+                        "Turn up the music & let the celebration begin... 🎵"
+                    ],
+                    typeSpeed: 45,
+                    backSpeed: 25,
+                    loop: true,
+                    backDelay: 2500
+                });
+
+            }, 550);
+        }
+
+        if (progressEl) progressEl.style.width = `${loadedPercent}%`;
+        if (percentEl) percentEl.innerText = `${loadedPercent}%`;
+    }, 95);
+
+    // "Celebrate Now" action
+    const celebrateBtn = document.getElementById('celebrate-btn');
+    if (celebrateBtn) {
+        celebrateBtn.addEventListener('click', () => {
+            // Trigger music play (or toggle state indicator)
+            if (sound.isMuted) {
+                audioBtn.classList.remove('muted');
+                sound.startBGM();
+            }
+
+            // Confetti Cannon explosion
+            confetti({
+                particleCount: 110,
+                spread: 75,
+                origin: { y: 0.6 }
+            });
+
+            // Smooth scroll down to letter note
+            const messageSec = document.getElementById('message');
+            if (messageSec) {
+                messageSec.scrollIntoView({ behavior: 'smooth' });
+            }
         });
-        requestAnimationFrame(animateBackground);
     }
-    animateBackground();
 
+    // ==========================================
+    // 12. LIGHTBOX CAPTION MODAL OVERLAYS
+    // ==========================================
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCap = document.getElementById('lightbox-caption');
+    const lightboxClose = document.querySelector('.lightbox-close');
 
-    // --- 3. CURSOR SPARKLE TRAIL ---
+    galleryItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const src = item.getAttribute('data-src');
+            const cap = item.getAttribute('data-caption');
+
+            if (lightboxImg && lightboxCap && lightbox) {
+                lightboxImg.src = src;
+                lightboxCap.innerText = cap;
+                lightbox.classList.add('active');
+                sound.triggerChime(69, 0.08, 0, 1.5); // soft bell sound
+            }
+        });
+    });
+
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+        });
+    }
+
+    if (lightbox) {
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox || e.target.classList.contains('lightbox-content-wrapper')) {
+                lightbox.classList.remove('active');
+            }
+        });
+    }
+
+    // ==========================================
+    // 13. COUNTDOWN TO MAY 26, 2026
+    // ==========================================
+    const birthdayTarget = new Date('2026-05-26T00:00:00').getTime();
+
+    function tickCountdown() {
+        const now = new Date().getTime();
+        const diff = birthdayTarget - now;
+
+        const countdownWrapper = document.getElementById('countdown');
+        if (!countdownWrapper) return;
+
+        // If birthday has already arrived or passed!
+        if (diff <= 0) {
+            countdownWrapper.innerHTML = `
+                <div class="birthday-now-glow" style="font-family:var(--font-serif);font-size:2.0rem;color:var(--color-gold-light);text-shadow:0 0 20px rgba(212,175,55,0.85);font-weight:700;">
+                    You Are NOW 24 Years Old! 🎉
+                </div>
+            `;
+            return;
+        }
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('days').innerText = String(d).padStart(2, '0');
+        document.getElementById('hours').innerText = String(h).padStart(2, '0');
+        document.getElementById('minutes').innerText = String(m).padStart(2, '0');
+        document.getElementById('seconds').innerText = String(s).padStart(2, '0');
+    }
+
+    setInterval(tickCountdown, 1000);
+    tickCountdown();
+
+    // ==========================================
+    // 14. GSAP SCROLL TRIGGERS REVEAL
+    // ==========================================
+    function setupScrollReveals() {
+        // Sibling envelop trigger fade-in
+        gsap.from('.envelope-wrapper', {
+            scrollTrigger: {
+                trigger: '#message',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            y: 50,
+            duration: 1.3,
+            ease: "power3.out"
+        });
+
+        // 24 Wishes grid cards entry
+        gsap.from('#wishes-container .wish-card-flip', {
+            scrollTrigger: {
+                trigger: '#wishes',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            scale: 0.82,
+            y: 35,
+            duration: 0.85,
+            stagger: 0.04,
+            ease: "back.out(1.4)"
+        });
+
+        // Swiper quotes carousel fade-in
+        gsap.from('.quotes-swiper', {
+            scrollTrigger: {
+                trigger: '#quotes',
+                start: "top 80%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            y: 40,
+            duration: 1.0,
+            ease: "power2.out"
+        });
+
+        // Cousinsposed frame fade-in
+        gsap.from('.cousin-frame-wrapper', {
+            scrollTrigger: {
+                trigger: '#cousins-squad',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            y: 60,
+            duration: 1.2,
+            stagger: 0.25,
+            ease: "power3.out"
+        });
+
+        // Cousins text card
+        gsap.from('.cousins-caption-card', {
+            scrollTrigger: {
+                trigger: '#cousins-squad',
+                start: "top 55%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            scale: 0.94,
+            duration: 1.0,
+            ease: "power2.out"
+        });
+
+        // Amazing cards Grid stagger entry
+        gsap.from('.amazing-card', {
+            scrollTrigger: {
+                trigger: '#amazing',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            y: 45,
+            duration: 0.85,
+            stagger: 0.08,
+            ease: "power2.out"
+        });
+
+        // Wish Cake container entry
+        gsap.from('.wish-cake-container', {
+            scrollTrigger: {
+                trigger: '#wish-section',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            scale: 0.88,
+            duration: 1.1,
+            ease: "back.out(1.2)"
+        });
+
+        // Gallery items stagger entry
+        gsap.from('.gallery-item', {
+            scrollTrigger: {
+                trigger: '#gallery',
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 0,
+            y: 45,
+            duration: 0.85,
+            stagger: 0.08,
+            ease: "power2.out"
+        });
+    }
+
+    // ==========================================
+    // 15. SHARE LINKS & WHATSAPP INTEGRATION
+    // ==========================================
+    const copyLinkBtn = document.getElementById('share-btn');
+    const waShareBtn = document.getElementById('whatsapp-share-btn');
+    const wishShareBtn = document.getElementById('social-wish-btn');
+
+    const shareTitle = "Happy 24th Birthday Muskan! 🎂✨";
+    const shareText = "Check out this beautiful interactive 3D birthday celebration site built for Muskan Singla's 24th birthday! 🌸";
+
+    function copyToClipboard() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert("Birthday page link successfully copied to clipboard! Share it with family & friends! 💖");
+        }).catch(err => {
+            console.error("Clipboard copy failed: ", err);
+        });
+    }
+
+    if (copyLinkBtn) {
+        copyLinkBtn.addEventListener('click', copyToClipboard);
+    }
+
+    if (waShareBtn) {
+        waShareBtn.addEventListener('click', () => {
+            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + window.location.href)}`;
+            window.open(waUrl, '_blank');
+        });
+    }
+
+    if (wishShareBtn) {
+        wishShareBtn.addEventListener('click', () => {
+            const text = "Muskan blew out her 24th birthday candle and sent a wish to the stars! Check out her website: ";
+            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + " " + window.location.href)}`;
+            window.open(waUrl, '_blank');
+        });
+    }
+
+    // ==========================================
+    // 16. DESKTOP CURSOR SPARKLE TRAIL
+    // ==========================================
     const trailCanvas = document.getElementById('trail-canvas');
     const trailCtx = trailCanvas.getContext('2d');
-
-    let trailParticles = [];
+    let particles = [];
 
     function resizeTrailCanvas() {
         trailCanvas.width = window.innerWidth;
@@ -318,15 +1542,16 @@ document.addEventListener('DOMContentLoaded', () => {
     resizeTrailCanvas();
     window.addEventListener('resize', resizeTrailCanvas);
 
-    class TrailParticle {
+    class Sparkle {
         constructor(x, y) {
             this.x = x;
             this.y = y;
-            this.size = Math.random() * 4 + 1.5;
-            this.color = `hsl(${Math.random() * 40 + 330}, 75%, 75%)`; // Glowing pastel pinks and purples
-            this.vx = (Math.random() - 0.5) * 2;
-            this.vy = (Math.random() - 0.5) * 2 - 1.0; // Gravity/Drift upwards slightly
-            this.alpha = 1;
+            this.size = Math.random() * 3 + 1.2;
+            const colors = ['#B76E79', '#C3B1E1', '#F7E7CE', '#FDFBF7'];
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.vx = (Math.random() - 0.5) * 1.6;
+            this.vy = (Math.random() - 0.5) * 1.6 - 0.4; // slight upward drift
+            this.alpha = 1.0;
             this.decay = Math.random() * 0.02 + 0.015;
         }
 
@@ -340,11 +1565,9 @@ document.addEventListener('DOMContentLoaded', () => {
             trailCtx.save();
             trailCtx.globalAlpha = this.alpha;
             trailCtx.fillStyle = this.color;
-            trailCtx.shadowBlur = 8;
+            trailCtx.shadowBlur = 6;
             trailCtx.shadowColor = this.color;
             trailCtx.beginPath();
-            
-            // Draw a cute sparkle shape
             trailCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             trailCtx.fill();
             trailCtx.restore();
@@ -352,1260 +1575,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addEventListener('mousemove', (e) => {
-        // Spawn 2 particles per mouse movement
+        // Spawn 2 sparkles per frame mouse moves
         for (let i = 0; i < 2; i++) {
-            trailParticles.push(new TrailParticle(e.clientX, e.clientY));
+            particles.push(new Sparkle(e.clientX, e.clientY));
         }
     });
 
-    // Touch support for mobile devices
     window.addEventListener('touchmove', (e) => {
-        if (e.touches.length > 0) {
-            const touch = e.touches[0];
+        if (e.touches && e.touches.length > 0) {
             for (let i = 0; i < 2; i++) {
-                trailParticles.push(new TrailParticle(touch.clientX, touch.clientY));
+                particles.push(new Sparkle(e.touches[0].clientX, e.touches[0].clientY));
             }
         }
     });
 
-    function animateTrail() {
+    function animateSparkles() {
         trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
         
-        trailParticles = trailParticles.filter(p => p.alpha > 0);
-        trailParticles.forEach(p => {
+        particles = particles.filter(p => p.alpha > 0);
+        particles.forEach(p => {
             p.update();
             p.draw();
         });
-        
-        requestAnimationFrame(animateTrail);
+
+        requestAnimationFrame(animateSparkles);
     }
-    animateTrail();
-
-
-    // --- 4. THREE.JS HERO SCENE ---
-    let heroScene, heroCamera, heroRenderer;
-    let cakeGroup, balloons = [];
-    let number24Group;
-    let starParticles;
-
-    function initHero3D() {
-        const container = document.getElementById('hero-3d-container');
-        if (!container) return;
-
-        try {
-            // Scene Setup
-            heroScene = new THREE.Scene();
-
-            // Camera Setup
-            heroCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-            heroCamera.position.set(0, 2, 7.5);
-
-            // Renderer Setup
-            heroRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            heroRenderer.setSize(container.clientWidth, container.clientHeight);
-            heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            heroRenderer.shadowMap.enabled = true;
-            container.appendChild(heroRenderer.domElement);
-
-            // Ambient Light (Soft Deep Purple)
-            const ambient = new THREE.AmbientLight(0x5a3b8c, 0.7);
-            heroScene.add(ambient);
-
-            // Directional Light (Warm Golden Highlight)
-            const dirLight = new THREE.DirectionalLight(0xf7e7ce, 1.2);
-            dirLight.position.set(5, 10, 5);
-            dirLight.castShadow = true;
-            heroScene.add(dirLight);
-
-            // Point Light for candles glow
-            const candleLight = new THREE.PointLight(0xffaa44, 2.0, 15);
-            candleLight.position.set(0, 1.2, 0);
-            heroScene.add(candleLight);
-
-            // Build Cake Group
-            cakeGroup = new THREE.Group();
-            build3DCake(cakeGroup);
-            cakeGroup.position.set(0, -1.2, 0);
-            heroScene.add(cakeGroup);
-
-            // Build Floating Balloons Group
-            buildBalloons();
-
-            // Build "24" beaded gold sculpture
-            number24Group = new THREE.Group();
-            buildNumber24(number24Group);
-            number24Group.position.set(0, 1.6, -4.0); // Floats behind the cake
-            heroScene.add(number24Group);
-
-            // Build 3D Sparkle particles
-            buildSparkleField();
-
-            // Start Render Loop
-            const clock = new THREE.Clock();
-            function render() {
-                const elapsedTime = clock.getElapsedTime();
-
-                // Rotate Cake
-                if (cakeGroup) {
-                    cakeGroup.rotation.y = elapsedTime * 0.2;
-                }
-
-                // Rotate & Float Number 24
-                if (number24Group) {
-                    number24Group.rotation.y = Math.sin(elapsedTime * 0.3) * 0.25;
-                    number24Group.position.y = 1.6 + Math.sin(elapsedTime * 0.8) * 0.15;
-                }
-
-                // Animate Candle Flames
-                const flames = cakeGroup.getObjectByName('flames');
-                if (flames) {
-                    flames.children.forEach((flame, index) => {
-                        const wave = Math.sin(elapsedTime * 10 + index * 10) * 0.12;
-                        flame.scale.set(1 + wave, 1.1 + wave * 1.5, 1 + wave);
-                        flame.rotation.z = Math.sin(elapsedTime * 8 + index) * 0.05;
-                    });
-                }
-
-                // Animate Balloons
-                balloons.forEach(balloon => {
-                    balloon.mesh.position.y += balloon.speed;
-                    // Lateral swaying movement
-                    balloon.mesh.position.x += Math.sin(elapsedTime * 1.5 + balloon.swayOffset) * 0.015;
-                    
-                    // Reset at top
-                    if (balloon.mesh.position.y > 6.0) {
-                        balloon.mesh.position.y = -6.0;
-                        balloon.mesh.position.x = (Math.random() - 0.5) * 7;
-                        balloon.mesh.position.z = (Math.random() - 0.5) * 5 - 2;
-                    }
-                });
-
-                // Spin Sparkles
-                if (starParticles) {
-                    starParticles.rotation.y = elapsedTime * 0.05;
-                    starParticles.rotation.x = elapsedTime * 0.03;
-                }
-
-                heroRenderer.render(heroScene, heroCamera);
-                requestAnimationFrame(render);
-            }
-            render();
-
-            // Window resize handler
-            window.addEventListener('resize', () => {
-                if (!heroCamera || !heroRenderer || !container) return;
-                heroCamera.aspect = container.clientWidth / container.clientHeight;
-                heroCamera.updateProjectionMatrix();
-                heroRenderer.setSize(container.clientWidth, container.clientHeight);
-            });
-
-        } catch (error) {
-            console.error("Three.js initialization error in Hero section:", error);
-        }
-    }
-
-    // Helper functions for 3D creation
-    function build3DCake(group) {
-        // Materials
-        const frostingGold = new THREE.MeshStandardMaterial({
-            color: 0xf7e7ce,
-            roughness: 0.18,
-            metalness: 0.2,
-            flatShading: false
-        });
-
-        const icingRose = new THREE.MeshStandardMaterial({
-            color: 0xB76E79,
-            roughness: 0.2,
-            metalness: 0.35
-        });
-
-        const candleMat = new THREE.MeshStandardMaterial({
-            color: 0x8D5B96,
-            roughness: 0.4
-        });
-
-        const flameMat = new THREE.MeshBasicMaterial({
-            color: 0xffaa33,
-            transparent: true,
-            opacity: 0.9
-        });
-
-        const standMat = new THREE.MeshStandardMaterial({
-            color: 0xdddddd,
-            roughness: 0.1,
-            metalness: 0.8
-        });
-
-        // Stand / Plate
-        const standGeo = new THREE.CylinderGeometry(2.3, 2.3, 0.12, 32);
-        const stand = new THREE.Mesh(standGeo, standMat);
-        stand.position.y = 0.06;
-        stand.receiveShadow = true;
-        group.add(stand);
-
-        const baseGeo = new THREE.CylinderGeometry(1.2, 1.6, 0.4, 32);
-        const baseStand = new THREE.Mesh(baseGeo, standMat);
-        baseStand.position.y = -0.2;
-        group.add(baseStand);
-
-        // Lower Tier
-        const tier1Geo = new THREE.CylinderGeometry(1.9, 1.9, 0.9, 32);
-        const tier1 = new THREE.Mesh(tier1Geo, icingRose);
-        tier1.position.y = 0.57;
-        tier1.castShadow = true;
-        tier1.receiveShadow = true;
-        group.add(tier1);
-
-        // Lower Tier Cream Drops (Decorative Spheres)
-        for (let i = 0; i < 16; i++) {
-            const angle = (i / 16) * Math.PI * 2;
-            const x = Math.cos(angle) * 1.95;
-            const z = Math.sin(angle) * 1.95;
-            const creamGeo = new THREE.SphereGeometry(0.1, 8, 8);
-            const cream = new THREE.Mesh(creamGeo, frostingGold);
-            cream.position.set(x, 0.98, z);
-            group.add(cream);
-        }
-
-        // Upper Tier
-        const tier2Geo = new THREE.CylinderGeometry(1.3, 1.3, 0.8, 32);
-        const tier2 = new THREE.Mesh(tier2Geo, frostingGold);
-        tier2.position.y = 1.42;
-        tier2.castShadow = true;
-        tier2.receiveShadow = true;
-        group.add(tier2);
-
-        // Upper Tier Cream Drops
-        for (let i = 0; i < 12; i++) {
-            const angle = (i / 12) * Math.PI * 2;
-            const x = Math.cos(angle) * 1.33;
-            const z = Math.sin(angle) * 1.33;
-            const creamGeo = new THREE.SphereGeometry(0.08, 8, 8);
-            const cream = new THREE.Mesh(creamGeo, icingRose);
-            cream.position.set(x, 1.82, z);
-            group.add(cream);
-        }
-
-        // 3 Candles
-        const candleGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.5, 12);
-        const candlePositions = [
-            { x: -0.4, y: 2.05, z: 0.1 },
-            { x: 0.3, y: 2.05, z: -0.3 },
-            { x: 0.1, y: 2.05, z: 0.4 }
-        ];
-
-        const flamesGroup = new THREE.Group();
-        flamesGroup.name = 'flames';
-
-        candlePositions.forEach((pos, idx) => {
-            const candle = new THREE.Mesh(candleGeo, candleMat);
-            candle.position.set(pos.x, pos.y, pos.z);
-            candle.castShadow = true;
-            group.add(candle);
-
-            // Wick
-            const wickGeo = new THREE.CylinderGeometry(0.015, 0.015, 0.1, 8);
-            const wick = new THREE.Mesh(wickGeo, new THREE.MeshBasicMaterial({ color: 0x333333 }));
-            wick.position.set(pos.x, pos.y + 0.28, pos.z);
-            group.add(wick);
-
-            // Flame Mesh
-            const flameGeo = new THREE.ConeGeometry(0.08, 0.25, 8);
-            flameGeo.translate(0, 0.125, 0); // Offset origin to bottom for proper scaling
-            const flame = new THREE.Mesh(flameGeo, flameMat);
-            flame.position.set(pos.x, pos.y + 0.32, pos.z);
-            flamesGroup.add(flame);
-        });
-
-        group.add(flamesGroup);
-    }
-
-    function buildBalloons() {
-        const colors = [0xB76E79, 0x8D5B96, 0xD4AF37]; // Rose Gold, Soft Purple, Gold
-        const balloonCount = 8;
-
-        for (let i = 0; i < balloonCount; i++) {
-            const color = colors[i % colors.length];
-            const mat = new THREE.MeshStandardMaterial({
-                color: color,
-                metalness: 0.65,
-                roughness: 0.18
-            });
-
-            // Balloon Geometry: stretched sphere + cone at bottom
-            const balloonGeo = new THREE.SphereGeometry(0.48, 16, 16);
-            balloonGeo.scale(1, 1.25, 1);
-            const balloonMesh = new THREE.Mesh(balloonGeo, mat);
-            balloonMesh.castShadow = true;
-
-            const knotGeo = new THREE.ConeGeometry(0.08, 0.12, 8);
-            const knot = new THREE.Mesh(knotGeo, mat);
-            knot.position.y = -0.62;
-            balloonMesh.add(knot);
-
-            // Thin string line
-            const points = [];
-            points.push(new THREE.Vector3(0, -0.62, 0));
-            points.push(new THREE.Vector3(0, -2.5, 0));
-            const stringGeo = new THREE.BufferGeometry().setFromPoints(points);
-            const stringMat = new THREE.LineBasicMaterial({ color: 0xcccccc, transparent: true, opacity: 0.4 });
-            const string = new THREE.Line(stringGeo, stringMat);
-            balloonMesh.add(string);
-
-            // Position randomly in hero background space
-            balloonMesh.position.set(
-                (Math.random() - 0.5) * 8,
-                (Math.random() - 0.5) * 12,
-                (Math.random() - 0.5) * 5 - 2
-            );
-
-            heroScene.add(balloonMesh);
-
-            balloons.push({
-                mesh: balloonMesh,
-                speed: Math.random() * 0.015 + 0.008,
-                swayOffset: Math.random() * 10
-            });
-        }
-    }
-
-    function buildNumber24(group) {
-        // Create 24 using glowing beaded gold spheres
-        const sphereMat = new THREE.MeshStandardMaterial({
-            color: 0xD4AF37, // Gold
-            metalness: 0.9,
-            roughness: 0.08,
-            emissive: 0xD4AF37,
-            emissiveIntensity: 0.15
-        });
-
-        const beadGeo = new THREE.SphereGeometry(0.17, 16, 16);
-
-        // Coordinates lists for Bead Layout (X, Y)
-        const number2Coords = [
-            // Top Curve
-            {x: -1.0, y: 1.0}, {x: -0.7, y: 1.3}, {x: -0.3, y: 1.5}, 
-            {x: 0.1, y: 1.5}, {x: 0.5, y: 1.3}, {x: 0.8, y: 1.0},
-            // Right Side
-            {x: 0.85, y: 0.6}, {x: 0.7, y: 0.2},
-            // Diagonal
-            {x: 0.4, y: -0.2}, {x: 0.1, y: -0.6}, 
-            {x: -0.2, y: -1.0}, {x: -0.5, y: -1.4},
-            // Base line
-            {x: -0.9, y: -1.7}, {x: -0.5, y: -1.7}, {x: -0.1, y: -1.7}, 
-            {x: 0.3, y: -1.7}, {x: 0.7, y: -1.7}, {x: 1.0, y: -1.7}
-        ];
-
-        const number4Coords = [
-            // Left stem
-            {x: 2.1, y: 1.3}, {x: 1.8, y: 0.9}, {x: 1.5, y: 0.5}, 
-            {x: 1.2, y: 0.1}, {x: 0.9, y: -0.3},
-            // Cross Bar
-            {x: 1.3, y: -0.3}, {x: 1.7, y: -0.3}, {x: 2.5, y: -0.3}, {x: 2.9, y: -0.3},
-            // Right Tall bar
-            {x: 2.1, y: 1.7}, {x: 2.1, y: 0.9}, {x: 2.1, y: 0.5}, {x: 2.1, y: 0.1},
-            {x: 2.1, y: -0.7}, {x: 2.1, y: -1.1}, {x: 2.1, y: -1.5}, {x: 2.1, y: -1.7}
-        ];
-
-        // Draw '2'
-        number2Coords.forEach(pos => {
-            const bead = new THREE.Mesh(beadGeo, sphereMat);
-            bead.position.set(pos.x - 0.75, pos.y, 0); // Offset left
-            group.add(bead);
-        });
-
-        // Draw '4'
-        number4Coords.forEach(pos => {
-            const bead = new THREE.Mesh(beadGeo, sphereMat);
-            bead.position.set(pos.x - 0.75, pos.y, 0); // Offset left
-            group.add(bead);
-        });
-
-        // Scale and tilt group slightly
-        group.scale.set(0.9, 0.9, 0.9);
-    }
-
-    function buildSparkleField() {
-        const count = 70;
-        const geom = new THREE.BufferGeometry();
-        const positions = [];
-
-        for (let i = 0; i < count; i++) {
-            positions.push(
-                (Math.random() - 0.5) * 15,
-                (Math.random() - 0.5) * 10,
-                (Math.random() - 0.5) * 10
-            );
-        }
-
-        geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        const mat = new THREE.PointsMaterial({
-            color: 0xf7e7ce,
-            size: 0.18,
-            transparent: true,
-            opacity: 0.8
-        });
-
-        starParticles = new THREE.Points(geom, mat);
-        heroScene.add(starParticles);
-    }
-
-
-    // --- 5. THREE.JS INTERACTIVE GIFTS SCENE ---
-    let giftScene, giftCamera, giftRenderer;
-    let giftBoxes = [];
-    const giftMessages = [
-        {
-            title: "Rose Gold Surprise! 🌸",
-            text: "Muskan, you are literally the best sister in the world. Thank you for listening to my stories, guiding me, and filling our home with laughter. I'm so proud of the beautiful, strong woman you've become! 💖"
-        },
-        {
-            title: "Magic & Adventure! ✨",
-            text: "May your 24th year open doors to dream career moves, exotic travel destinations, and beautiful memories. Believe in yourself, because your sibling will always be here to support and cheer you on! ✈️"
-        },
-        {
-            title: "A Heart full of Love! 💛",
-            text: "On your birthday, I wish you endless happiness, good health, and an abundance of smiles. Never let your sparkle fade, Muskan Singla! You are an absolute treasure. Happy 24th Birthday! 👑"
-        }
-    ];
-
-    function initGifts3D() {
-        const card = document.querySelector('.message-card');
-        if (!card) return;
-
-        // Create canvas inside the Sibling Card
-        const giftsContainer = document.createElement('div');
-        giftsContainer.id = 'gifts-3d-container';
-        giftsContainer.style.width = '100%';
-        giftsContainer.style.height = '220px';
-        giftsContainer.style.marginTop = '30px';
-        giftsContainer.style.position = 'relative';
-        card.appendChild(giftsContainer);
-
-        // Subtitle instructions
-        const instr = document.createElement('div');
-        instr.className = 'wish-instruction';
-        instr.innerText = "There are 3 birthday gifts for you! Click to open them 🎁";
-        giftsContainer.appendChild(instr);
-
-        try {
-            // Setup scene
-            giftScene = new THREE.Scene();
-
-            giftCamera = new THREE.PerspectiveCamera(45, giftsContainer.clientWidth / giftsContainer.clientHeight, 0.1, 100);
-            giftCamera.position.set(0, 0.5, 6);
-
-            giftRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            giftRenderer.setSize(giftsContainer.clientWidth, giftsContainer.clientHeight);
-            giftRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            giftsContainer.appendChild(giftRenderer.domElement);
-
-            // Lighting
-            const ambient = new THREE.AmbientLight(0x7a5b99, 0.8);
-            giftScene.add(ambient);
-
-            const dirLight = new THREE.DirectionalLight(0xfdfbf7, 1.2);
-            dirLight.position.set(2, 4, 3);
-            giftScene.add(dirLight);
-
-            // Build 3 boxes side by side: Rose Gold, Purple, Gold
-            const colors = [0xB76E79, 0x5a3b8c, 0xD4AF37];
-            const positionsX = [-1.8, 0, 1.8];
-
-            for (let i = 0; i < 3; i++) {
-                const boxGroup = new THREE.Group();
-                boxGroup.userData = { id: i, isOpen: false };
-
-                // Material
-                const mat = new THREE.MeshStandardMaterial({
-                    color: colors[i],
-                    roughness: 0.2,
-                    metalness: 0.5
-                });
-
-                const ribbonMat = new THREE.MeshStandardMaterial({
-                    color: i === 1 ? 0xD4AF37 : 0xfdfbf7, // Gold ribbon on purple box, white ribbon on others
-                    roughness: 0.1,
-                    metalness: 0.8
-                });
-
-                // 1. Box Base (Cube)
-                const baseGeo = new THREE.BoxGeometry(0.85, 0.85, 0.85);
-                const base = new THREE.Mesh(baseGeo, mat);
-                base.position.y = 0.425;
-                boxGroup.add(base);
-
-                // 2. Box Lid
-                const lidGeo = new THREE.BoxGeometry(0.92, 0.22, 0.92);
-                const lid = new THREE.Mesh(lidGeo, mat);
-                lid.position.y = 0.9;
-                lid.name = 'lid';
-                boxGroup.add(lid);
-
-                // 3. Ribbon band around box base
-                const bandVGeo = new THREE.BoxGeometry(0.12, 0.86, 0.86);
-                const bandV = new THREE.Mesh(bandVGeo, ribbonMat);
-                bandV.position.y = 0.425;
-                boxGroup.add(bandV);
-
-                const bandHGeo = new THREE.BoxGeometry(0.86, 0.86, 0.12);
-                const bandH = new THREE.Mesh(bandHGeo, ribbonMat);
-                bandH.position.y = 0.425;
-                boxGroup.add(bandH);
-
-                // 4. Ribbon ribbon decoration on Lid
-                const lidRibV = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.24, 0.94), ribbonMat);
-                lidRibV.position.y = 0.9;
-                lidRibV.name = 'lidRibV';
-                boxGroup.add(lidRibV);
-
-                const lidRibH = new THREE.Mesh(new THREE.BoxGeometry(0.94, 0.24, 0.14), ribbonMat);
-                lidRibH.position.y = 0.9;
-                lidRibH.name = 'lidRibH';
-                boxGroup.add(lidRibH);
-
-                // Bow knot (Sphere)
-                const bowGeo = new THREE.SphereGeometry(0.08, 8, 8);
-                const bow = new THREE.Mesh(bowGeo, ribbonMat);
-                bow.position.y = 1.04;
-                bow.name = 'bow';
-                boxGroup.add(bow);
-
-                boxGroup.position.set(positionsX[i], -0.6, 0);
-                giftScene.add(boxGroup);
-                giftBoxes.push(boxGroup);
-            }
-
-            // Raycasting for Box Clicks
-            const raycaster = new THREE.Raycaster();
-            const mouse = new THREE.Vector2();
-
-            function onGiftClick(event) {
-                // Calculate mouse position relative to canvas container
-                const rect = giftRenderer.domElement.getBoundingClientRect();
-                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-                raycaster.setFromCamera(mouse, giftCamera);
-                
-                // Inspect intersections
-                const intersects = raycaster.intersectObjects(giftScene.children, true);
-
-                if (intersects.length > 0) {
-                    // Find parent group that holds userData
-                    let obj = intersects[0].object;
-                    while (obj.parent && !obj.userData.hasOwnProperty('id')) {
-                        obj = obj.parent;
-                    }
-
-                    if (obj.userData.hasOwnProperty('id')) {
-                        openGift(obj);
-                    }
-                }
-            }
-
-            // Touch support for mobiles
-            function onGiftTouch(event) {
-                if (event.touches.length > 0) {
-                    onGiftClick(event.touches[0]);
-                }
-            }
-
-            giftRenderer.domElement.addEventListener('click', onGiftClick);
-            giftRenderer.domElement.addEventListener('touchstart', onGiftTouch);
-
-            // Animate Loop
-            const clock = new THREE.Clock();
-            function renderGifts() {
-                const elapsedTime = clock.getElapsedTime();
-                
-                giftBoxes.forEach((box, index) => {
-                    // Slow hover rotation
-                    if (!box.userData.isOpen) {
-                        box.rotation.y = elapsedTime * 0.4 + index * 2.0;
-                        box.position.y = -0.6 + Math.sin(elapsedTime * 2.5 + index * 1.5) * 0.08;
-                    }
-                });
-
-                giftRenderer.render(giftScene, giftCamera);
-                requestAnimationFrame(renderGifts);
-            }
-            renderGifts();
-
-            // Resize
-            window.addEventListener('resize', () => {
-                if (!giftCamera || !giftRenderer || !giftsContainer) return;
-                giftCamera.aspect = giftsContainer.clientWidth / giftsContainer.clientHeight;
-                giftCamera.updateProjectionMatrix();
-                giftRenderer.setSize(giftsContainer.clientWidth, giftsContainer.clientHeight);
-            });
-
-        } catch (e) {
-            console.error("Three.js initialization failed in Sibling Message section:", e);
-        }
-    }
-
-    function openGift(boxGroup) {
-        if (boxGroup.userData.isOpen) return;
-        boxGroup.userData.isOpen = true;
-
-        // Audio chimes on open
-        musicPlayer.playChimeNote(72, 0.15, 0, 1.5);
-        musicPlayer.playPianoNote(64, 0.12, 0.1, 2.0);
-
-        // Confetti burst
-        confetti({
-            particleCount: 50,
-            spread: 60,
-            origin: { y: 0.6 }
-        });
-
-        // 3D lid lift animation with GSAP
-        const lid = boxGroup.getObjectByName('lid');
-        const lidRibV = boxGroup.getObjectByName('lidRibV');
-        const lidRibH = boxGroup.getObjectByName('lidRibH');
-        const bow = boxGroup.getObjectByName('bow');
-
-        const lidParts = [lid, lidRibV, lidRibH, bow];
-
-        // Animate parts popping off
-        lidParts.forEach(part => {
-            if (!part) return;
-            gsap.to(part.position, {
-                y: part.position.y + 1.5,
-                x: part.position.x + (Math.random() - 0.5) * 0.5,
-                duration: 0.8,
-                ease: "power2.out"
-            });
-            gsap.to(part.rotation, {
-                z: (Math.random() - 0.5) * 2,
-                y: (Math.random() - 0.5) * 2,
-                duration: 0.8,
-                ease: "power2.out"
-            });
-            gsap.to(part.scale, {
-                x: 0, y: 0, z: 0,
-                delay: 0.3,
-                duration: 0.5,
-                ease: "power2.in"
-            });
-        });
-
-        // Animate entire box rotation & focus
-        gsap.to(boxGroup.rotation, {
-            y: boxGroup.rotation.y + Math.PI * 2,
-            duration: 1.0,
-            ease: "back.out(1.7)"
-        });
-
-        // Display popup modal letter after box opens
-        setTimeout(() => {
-            const data = giftMessages[boxGroup.userData.id];
-            
-            // Re-use gallery lightbox overlay for letter display
-            const lightbox = document.getElementById('lightbox');
-            const lImg = document.getElementById('lightbox-img');
-            const lCap = document.getElementById('lightbox-caption');
-
-            // Hide image node, setup formatted text block
-            lImg.style.display = 'none';
-            lCap.innerHTML = `<h3 style="font-family:var(--font-serif);font-size:1.8rem;color:var(--color-gold);margin-bottom:15px;">${data.title}</h3>
-                              <p style="font-size:1.2rem;line-height:1.8;color:var(--color-ivory);font-weight:300;">${data.text}</p>`;
-            
-            lightbox.classList.add('active');
-        }, 800);
-    }
-
-
-    // --- 6. POPULATE 24 WISHES FOR 24 YEARS ---
-    const wishesContainer = document.getElementById('wishes-container');
-    if (wishesContainer) {
-        wishes.forEach((wishText, index) => {
-            const wishNum = index + 1;
-            
-            const card = document.createElement('div');
-            card.className = 'wish-card-flip';
-            card.innerHTML = `
-                <div class="wish-card-front">
-                    <span class="wish-number">${String(wishNum).padStart(2, '0')}</span>
-                    <span class="wish-sparkle">✦</span>
-                    <h4>Wish #${wishNum}</h4>
-                </div>
-                <div class="wish-card-back">
-                    <p>${wishText}</p>
-                </div>
-            `;
-            
-            wishesContainer.appendChild(card);
-        });
-    }
-
-
-    // --- 7. AUTO-PLAYING QUOTES CAROUSEL ---
-    const quotesWrapper = document.getElementById('quotes-wrapper');
-    const dotsContainer = document.getElementById('carousel-dots');
-    
-    if (quotesWrapper && dotsContainer) {
-        quotes.forEach((q, index) => {
-            // Create slide element
-            const slide = document.createElement('div');
-            slide.className = 'quote-slide';
-            slide.innerHTML = `
-                <div class="glass-card quote-card">
-                    <div class="quote-mark">“</div>
-                    <p class="quote-text">${q.text}</p>
-                    <p class="quote-author">${q.author}</p>
-                </div>
-            `;
-            quotesWrapper.appendChild(slide);
-
-            // Create carousel dot
-            const dot = document.createElement('button');
-            dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
-            dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
-            dotsContainer.appendChild(dot);
-
-            dot.addEventListener('click', () => {
-                goToSlide(index);
-            });
-        });
-
-        let currentSlide = 0;
-        let carouselInterval = null;
-
-        function goToSlide(idx) {
-            currentSlide = idx;
-            quotesWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
-            
-            // Update active dot
-            const dots = dotsContainer.querySelectorAll('.carousel-dot');
-            dots.forEach((dot, index) => {
-                if (index === currentSlide) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-
-            resetCarouselTimer();
-        }
-
-        function nextSlide() {
-            const nextIdx = (currentSlide + 1) % quotes.length;
-            goToSlide(nextIdx);
-        }
-
-        function resetCarouselTimer() {
-            if (carouselInterval) clearInterval(carouselInterval);
-            carouselInterval = setInterval(nextSlide, 5000);
-        }
-
-        resetCarouselTimer();
-    }
-
-
-    // --- 8. MEMORY GALLERY LIGHTBOX POPUP ---
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxCap = document.getElementById('lightbox-caption');
-    const lightboxClose = document.querySelector('.lightbox-close');
-
-    galleryItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const imgSrc = item.getAttribute('data-src');
-            const caption = item.getAttribute('data-caption');
-
-            if (item.classList.contains('themed-card')) {
-                // If it is a gradient text card, hide image and show formatted text block
-                lightboxImg.style.display = 'none';
-                const textContent = item.querySelector('.text-card-content').innerHTML;
-                lightboxCap.innerHTML = `<div style="padding:20px;">${textContent}<br><br><em style="color:var(--color-rose-gold-light);font-size:0.95rem;">"${caption}"</em></div>`;
-            } else {
-                // Show real photo
-                lightboxImg.style.display = 'block';
-                lightboxImg.src = imgSrc;
-                lightboxCap.innerText = caption;
-            }
-
-            lightbox.classList.add('active');
-            
-            // Play a soft bell ring on memory view
-            musicPlayer.playChimeNote(67, 0.1, 0, 1.5);
-        });
-    });
-
-    // Close Lightbox
-    function closeLightboxModal() {
-        lightbox.classList.remove('active');
-    }
-
-    if (lightboxClose) lightboxClose.addEventListener('click', closeLightboxModal);
-    
-    // Close on clicking overlay black background
-    if (lightbox) {
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox || e.target.classList.contains('lightbox-content-wrapper')) {
-                closeLightboxModal();
-            }
-        });
-    }
-
-    // --- 9. MAKE A WISH INTERACTIVE 3D CAKE & BLOWOUT ---
-    let wishScene, wishCamera, wishRenderer;
-    let wishCakeGroup;
-    let isWishBlown = false;
-
-    function initWish3D() {
-        const container = document.getElementById('wish-3d-container');
-        if (!container) return;
-
-        try {
-            wishScene = new THREE.Scene();
-
-            wishCamera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
-            wishCamera.position.set(0, 2.5, 6);
-
-            wishRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            wishRenderer.setSize(container.clientWidth, container.clientHeight);
-            wishRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            container.appendChild(wishRenderer.domElement);
-
-            // Lighting
-            const ambient = new THREE.AmbientLight(0x4a2e80, 0.8);
-            wishScene.add(ambient);
-
-            const dirLight = new THREE.DirectionalLight(0xfdfbf7, 1.2);
-            dirLight.position.set(2, 6, 2);
-            wishScene.add(dirLight);
-
-            // Single burning candle light
-            const flameLight = new THREE.PointLight(0xffaa44, 2.5, 12);
-            flameLight.position.set(0, 1.3, 0);
-            wishScene.add(flameLight);
-
-            // Build Cake Group
-            wishCakeGroup = new THREE.Group();
-            buildWishCake(wishCakeGroup);
-            wishCakeGroup.position.set(0, -1.0, 0);
-            wishScene.add(wishCakeGroup);
-
-            // Raycaster to blow candle by clicking directly on it
-            const raycaster = new THREE.Raycaster();
-            const mouse = new THREE.Vector2();
-
-            function onCandleClick(event) {
-                if (isWishBlown) return;
-
-                const rect = wishRenderer.domElement.getBoundingClientRect();
-                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-                raycaster.setFromCamera(mouse, wishCamera);
-                const intersects = raycaster.intersectObjects(wishScene.children, true);
-
-                if (intersects.length > 0) {
-                    // Check if clicked the flame, candle, or wick
-                    let hitCandle = false;
-                    intersects.forEach(hit => {
-                        if (hit.object.name === 'wish-flame' || hit.object.name === 'wish-candle') {
-                            hitCandle = true;
-                        }
-                    });
-
-                    if (hitCandle) {
-                        blowOutCandles();
-                    }
-                }
-            }
-
-            wishRenderer.domElement.addEventListener('mousedown', onCandleClick);
-
-            // Render loop
-            const clock = new THREE.Clock();
-            function renderWish() {
-                const elapsedTime = clock.getElapsedTime();
-
-                // Slowly rotate cake
-                if (wishCakeGroup) {
-                    wishCakeGroup.rotation.y = elapsedTime * 0.15;
-                }
-
-                // Animate Flame
-                const flame = wishScene.getObjectByName('wish-flame');
-                if (flame && !isWishBlown) {
-                    const wave = Math.sin(elapsedTime * 12) * 0.15;
-                    flame.scale.set(1 + wave, 1.2 + wave * 1.5, 1 + wave);
-                    flame.rotation.z = Math.sin(elapsedTime * 10) * 0.08;
-                    flameLight.intensity = 2.5 + Math.sin(elapsedTime * 15) * 0.5;
-                } else if (flameLight && isWishBlown) {
-                    // Dim light down
-                    flameLight.intensity = Math.max(0, flameLight.intensity - 0.15);
-                }
-
-                wishRenderer.render(wishScene, wishCamera);
-                requestAnimationFrame(renderWish);
-            }
-            renderWish();
-
-            // Resize
-            window.addEventListener('resize', () => {
-                if (!wishCamera || !wishRenderer || !container) return;
-                wishCamera.aspect = container.clientWidth / container.clientHeight;
-                wishCamera.updateProjectionMatrix();
-                wishRenderer.setSize(container.clientWidth, container.clientHeight);
-            });
-
-        } catch (e) {
-            console.error("Three.js Wish scene init failed:", e);
-        }
-    }
-
-    function buildWishCake(group) {
-        // Soft purple tier, rose gold icing, and single gold candle
-        const matPurple = new THREE.MeshStandardMaterial({
-            color: 0x4a2e80,
-            roughness: 0.2,
-            metalness: 0.4
-        });
-
-        const matGold = new THREE.MeshStandardMaterial({
-            color: 0xD4AF37,
-            roughness: 0.1,
-            metalness: 0.8
-        });
-
-        const standMat = new THREE.MeshStandardMaterial({
-            color: 0xffffff,
-            roughness: 0.1,
-            metalness: 0.6
-        });
-
-        const flameMat = new THREE.MeshBasicMaterial({
-            color: 0xff7700,
-            transparent: true,
-            opacity: 0.95
-        });
-
-        // Stand / Plate
-        const stand = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 0.08, 32), standMat);
-        stand.position.y = 0.04;
-        group.add(stand);
-
-        // Cake Tier
-        const tier = new THREE.Mesh(new THREE.CylinderGeometry(1.3, 1.3, 0.8, 32), matPurple);
-        tier.position.y = 0.44;
-        group.add(tier);
-
-        // Cream drops around edge
-        for (let i = 0; i < 12; i++) {
-            const angle = (i / 12) * Math.PI * 2;
-            const x = Math.cos(angle) * 1.32;
-            const z = Math.sin(angle) * 1.32;
-            const cream = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), matGold);
-            cream.position.set(x, 0.84, z);
-            group.add(cream);
-        }
-
-        // Single Giant Candle in the center
-        const candle = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.6, 12), matGold);
-        candle.position.set(0, 1.14, 0);
-        candle.name = 'wish-candle';
-        group.add(candle);
-
-        // Wick
-        const wick = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.1, 8), new THREE.MeshBasicMaterial({ color: 0x222222 }));
-        wick.position.set(0, 1.48, 0);
-        group.add(wick);
-
-        // Glowing Flame
-        const flameGeo = new THREE.ConeGeometry(0.09, 0.32, 8);
-        flameGeo.translate(0, 0.16, 0);
-        const flame = new THREE.Mesh(flameGeo, flameMat);
-        flame.position.set(0, 1.52, 0);
-        flame.name = 'wish-flame';
-        group.add(flame);
-    }
-
-    function blowOutCandles() {
-        if (isWishBlown) return;
-        isWishBlown = true;
-
-        // 1. Shrink flame mesh
-        const flame = wishScene.getObjectByName('wish-flame');
-        if (flame) {
-            gsap.to(flame.scale, {
-                x: 0, y: 0, z: 0,
-                duration: 0.3,
-                ease: "power2.inOut",
-                onComplete: () => {
-                    flame.visible = false;
-                }
-            });
-        }
-
-        // 2. Play soft chime note then sweeping sound
-        musicPlayer.playChimeNote(60, 0.1, 0, 1);
-        musicPlayer.playChimeNote(72, 0.15, 0.15, 1.5);
-        musicPlayer.playPianoNote(67, 0.12, 0.3, 3);
-
-        // 3. Fire massive confetti explosion from the center of the cake!
-        const rect = document.getElementById('wish-3d-container').getBoundingClientRect();
-        const originY = (rect.top + rect.height / 2) / window.innerHeight;
-        
-        confetti({
-            particleCount: 150,
-            spread: 90,
-            origin: { x: 0.5, y: originY }
-        });
-
-        // Triple confetti burst for extra wow factor
-        setTimeout(() => {
-            confetti({
-                particleCount: 80,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 }
-            });
-            confetti({
-                particleCount: 80,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 }
-            });
-        }, 300);
-
-        // 4. Show success popup card after blowout
-        setTimeout(() => {
-            const success = document.getElementById('wish-success-msg');
-            if (success) {
-                success.classList.add('active');
-            }
-        }, 1200);
-    }
-
-    // Attach to Blow button
-    const blowBtn = document.getElementById('blow-btn');
-    if (blowBtn) {
-        blowBtn.addEventListener('click', blowOutCandles);
-    }
-
-
-    // --- 10. COUNTDOWN TIMER LOGIC ---
-    // Targets May 26, 2026 00:00:00 (local time)
-    const targetDate = new Date('2026-05-26T00:00:00').getTime();
-
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const diff = targetDate - now;
-
-        const countdownContainer = document.getElementById('countdown');
-        if (!countdownContainer) return;
-
-        // If it's already her birthday!
-        if (diff <= 0) {
-            countdownContainer.innerHTML = `
-                <div class="birthday-now-glow" style="font-family:var(--font-serif);font-size:2.2rem;color:var(--color-gold-light);text-shadow:0 0 20px rgba(212,175,55,0.8);animation:pulseGlow 2s infinite alternate;">
-                    You are NOW 24 years old! 🎉
-                </div>
-            `;
-            return;
-        }
-
-        // Calculate time segments
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        // Update elements
-        document.getElementById('days').innerText = String(days).padStart(2, '0');
-        document.getElementById('hours').innerText = String(hours).padStart(2, '0');
-        document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
-        document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
-    }
-
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
-
-
-    // --- 11. GSAP ENTRANCE & SCROLL TRIGGERS ---
-    // Register scroll plugin
-    gsap.registerPlugin(ScrollTrigger);
-
-    function setupScrollAnimations() {
-        // Hero Content Fade-in
-        gsap.from('.hero-text-content', {
-            opacity: 0,
-            y: 40,
-            duration: 1.4,
-            ease: "power3.out",
-            delay: 0.5
-        });
-
-        // Sibling letter slide-in reveal
-        gsap.from('.message-card', {
-            scrollTrigger: {
-                trigger: '#message',
-                start: "top 80%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            y: 50,
-            duration: 1.2,
-            ease: "power2.out"
-        });
-
-        // Wishes Cards Reveal (Staggered scale in)
-        gsap.from('#wishes-container .wish-card-flip', {
-            scrollTrigger: {
-                trigger: '#wishes',
-                start: "top 75%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            scale: 0.8,
-            y: 30,
-            duration: 0.8,
-            stagger: 0.05,
-            ease: "back.out(1.5)"
-        });
-
-        // Why You're Amazing (Staggered cards layout)
-        gsap.from('.amazing-card', {
-            scrollTrigger: {
-                trigger: '#amazing',
-                start: "top 75%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            y: 40,
-            duration: 0.9,
-            stagger: 0.12,
-            ease: "power2.out"
-        });
-
-        // Memory Gallery (Slide up together)
-        gsap.from('.gallery-item', {
-            scrollTrigger: {
-                trigger: '#gallery',
-                start: "top 75%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            y: 50,
-            duration: 1.0,
-            stagger: 0.15,
-            ease: "power3.out"
-        });
-
-        // Wish section scale-in
-        gsap.from('.wish-cake-container', {
-            scrollTrigger: {
-                trigger: '#wish-section',
-                start: "top 75%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            scale: 0.9,
-            duration: 1.2,
-            ease: "back.out(1.2)"
-        });
-    }
-
-
-    // --- 12. LOADING SCREEN CONTROL & CTA CELEBRATION ---
-    const progressEl = document.getElementById('progress-bar');
-    const percentEl = document.getElementById('loader-percent');
-    let loadPercent = 0;
-
-    // Simulate preloading of assets
-    const loadInterval = setInterval(() => {
-        loadPercent += Math.floor(Math.random() * 8) + 3;
-        if (loadPercent >= 100) {
-            loadPercent = 100;
-            clearInterval(loadInterval);
-            
-            // Fade-out loading screen
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                loader.style.opacity = '0';
-                loader.style.visibility = 'hidden';
-
-                // Fire initial double confetti burst when page fully loaded!
-                confetti({
-                    particleCount: 60,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0, y: 0.8 }
-                });
-                confetti({
-                    particleCount: 60,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1, y: 0.8 }
-                });
-
-                // Initialize 3D elements after loader clears to prevent rendering hiccups
-                initHero3D();
-                initGifts3D();
-                initWish3D();
-                setupScrollAnimations();
-
-                // Setup Typewriter subtitles in Hero
-                new Typed('#typed-welcome', {
-                    strings: [
-                        "May 26, 2026 — A day the world got a little more magical ✨",
-                        "Turn up the sound & let the magic begin... 🎵",
-                        "Happy 24th Birthday to my favorite human in the universe! 💖"
-                    ],
-                    typeSpeed: 45,
-                    backSpeed: 25,
-                    loop: true,
-                    backDelay: 2500
-                });
-
-            }, 500);
-        }
-        
-        progressEl.style.width = `${loadPercent}%`;
-        percentEl.innerText = `${loadPercent}%`;
-    }, 80);
-
-
-    // "Celebrate Now" CTA Button click
-    document.getElementById('celebrate-btn').addEventListener('click', () => {
-        // Start playing music
-        musicPlayer.startAudio();
-
-        // Fire interactive double side burst
-        confetti({
-            particleCount: 80,
-            spread: 60,
-            origin: { y: 0.6 }
-        });
-
-        // Smooth Scroll to Message section
-        const msgSection = document.getElementById('message');
-        if (msgSection) {
-            msgSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    });
-
-    // Share Button Logic
-    document.getElementById('share-btn').addEventListener('click', () => {
-        if (navigator.share) {
-            navigator.share({
-                title: "Happy 24th Birthday Muskan! 🎂",
-                text: "Check out this beautiful 3D birthday celebration site for Muskan Singla!",
-                url: window.location.href
-            }).catch(console.error);
-        } else {
-            // Fallback: Copy to clipboard
-            navigator.clipboard.writeText(window.location.href);
-            alert("Birthday website link copied to clipboard! Share it with family & friends! 💖");
-        }
-    });
-
+    animateSparkles();
 });

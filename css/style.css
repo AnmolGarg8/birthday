@@ -1715,10 +1715,14 @@ body {
 /* ==========================================
    Memory Gallery Section (Kept & Polished)
    ========================================== */
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
+.gallery-swiper {
+    width: 100%;
+    padding-top: 40px;
+    padding-bottom: 60px;
+}
+
+.gallery-swiper .swiper-slide {
+    width: 320px;
 }
 
 .gallery-item {

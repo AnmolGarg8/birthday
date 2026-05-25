@@ -685,6 +685,12 @@ document.addEventListener('DOMContentLoaded', () => {
             envelopeWrapper.classList.add('open');
             sound.triggerChime(76, 0.15, 0, 1.2);
             
+            // Auto-play music when envelope is opened
+            const audioToggle = document.getElementById('audio-toggle');
+            if (audioToggle && !audioToggle.classList.contains('playing')) {
+                audioToggle.click();
+            }
+
             // Expand card overlay after sliding open
             setTimeout(() => {
                 envelopeWrapper.classList.add('expanded');
@@ -927,19 +933,35 @@ document.addEventListener('DOMContentLoaded', () => {
             ease: "back.out(1.2)"
         });
 
-        // Gallery items stagger entry
-        gsap.from('.gallery-item', {
-            scrollTrigger: {
-                trigger: '#gallery',
-                start: "top 75%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            y: 45,
-            duration: 0.85,
-            stagger: 0.08,
-            ease: "power2.out"
-        });
+        // Initialize 3D Coverflow Swiper for Gallery
+        if (document.querySelector('.gallery-swiper')) {
+            new Swiper('.gallery-swiper', {
+                effect: 'coverflow',
+                grabCursor: true,
+                centeredSlides: true,
+                slidesPerView: 'auto',
+                loop: true,
+                coverflowEffect: {
+                    rotate: 15,
+                    stretch: 0,
+                    depth: 250,
+                    modifier: 1,
+                    slideShadows: true,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                autoplay: {
+                    delay: 2500,
+                    disableOnInteraction: false,
+                }
+            });
+        }
     }
 
     // ==========================================
